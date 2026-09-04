@@ -1,0 +1,258 @@
+============================================================
+  SECURITY AUDIT — Vulnerabilities Found & Fixed
+============================================================
+
+You asked me to check the site for anything that could be used
+to hack it. I found 11 real issues, ranging from Critical to
+Low severity, and fixed all of them in this update. Below is
+the full report — please read it, especially the CRITICAL ones.
+
+
+────────────────────────────────────────────────────────────
+ 1. CRITICAL — .env file could be publicly readable
+────────────────────────────────────────────────────────────
+The old .htaccess used the Apache 2.2 syntax ("Order/Deny") to
+block access to .env. Apache 2.4 (the default on most current
+hosting and current XAMPP) ignores that syntax unless an old
+compatibility module is loaded — meaning on many real servers,
+anyone could visit yoursite.com/.env directly in a browser and
+read your DATABASE password, ADMIN password, and Gmail SMTP
+password in plain text.
+
+FIX: .htaccess now uses both the modern ("Require all denied")
+and legacy syntax, so .env is blocked regardless of Apache
+version. Also locked down direct access to /config/, /includes/,
+/database/, /patch/ and any .sql/.env/.log file project-wide.
+
+
+────────────────────────────────────────────────────────────
+ 2. CRITICAL — Admin actions vulnerable to CSRF
+────────────────────────────────────────────────────────────
+None of the admin forms had CSRF protection, and product/category
+deletion used simple GET links. This meant: if a logged-in admin
+visited ANY other website containing a hidden
+<img src="yoursite.com/admin/product-delete.php?id=5">, the
+browser would silently send that request WITH the admin's login
+cookie attached — deleting the product with no confirmation ever
+shown, and no way to know it happened.
+
+The same trick could change calculator/contact-message statuses,
+update calculator settings (like the discount %), or send a test
+email from your account — all triggered by an admin simply
+browsing the web while logged in.
+
+FIX: Added a CSRF token system (random 64-char token stored in
+the session, verified on every state-changing request). Applied
+to all 13 admin forms and 2 delete actions. Delete actions were
+also converted from GET links to POST forms (GET requests should
+never change data — this follows web security best practice).
+
+
+────────────────────────────────────────────────────────────
+ 3. CRITICAL — Diagnostic tool exposed database config publicly
+────────────────────────────────────────────────────────────
+db-check.php was accessible to anyone, no login required, and
+displayed your DB host, database name, and username (with
+partial password info) directly in the browser.
+
+FIX: db-check.php now requires an active admin login. (You should
+still delete this file entirely once your site is fully set up —
+see README.txt.)
+
+
+────────────────────────────────────────────────────────────
+ 4. HIGH — Admin login had no brute-force protection
+────────────────────────────────────────────────────────────
+An attacker could try unlimited username/password combinations
+against admin/login.php with no delay, lockout, or logging —
+a script could try thousands of passwords per minute.
+
+FIX: After 6 failed attempts from the same IP, login is locked
+for 10 minutes. Also switched the credential comparison to
+hash_equals() (timing-safe — prevents an attacker from guessing
+your password one character at a time by measuring response
+speed, a real technique called a timing attack).
+
+
+────────────────────────────────────────────────────────────
+ 5. HIGH — Estimate PDF links were guessable
+────────────────────────────────────────────────────────────
+/estimate.php?ref=XXXX has no login requirement (by design, so
+clients can view their own estimate) — but the reference code
+was generated from uniqid(), which is based on the server clock
+and has very limited randomness. Someone could realistically
+guess or brute-force another client's ref code and view their
+name, phone, email, and full pricing.
+
+FIX: Reference codes are now generated with random_bytes()
+(cryptographically secure randomness) — effectively unguessable.
+
+
+────────────────────────────────────────────────────────────
+ 6. MEDIUM — File upload only checked the file extension
+────────────────────────────────────────────────────────────
+The product image uploader only checked that the filename ended
+in .jpg/.png/etc — it never verified the file was ACTUALLY an
+image. A malicious file could be renamed with an image extension
+and uploaded.
+
+FIX: Every upload is now verified with getimagesize() to confirm
+it's a genuine image before being saved, in addition to the
+extension check. Also added a .htaccess inside /uploads/ that
+disables script execution entirely in that folder — even in the
+unlikely case something slipped through, the server would refuse
+to run it as code, only ever serve it as a static file.
+
+
+────────────────────────────────────────────────────────────
+ 7. MEDIUM — Email header injection via the contact form
+────────────────────────────────────────────────────────────
+The contact form's "name" field was used directly in the
+outgoing email's Reply-To header. If a name contained hidden
+newline characters, it could inject extra email headers (e.g.
+a hidden Bcc: field) into the notification email sent to you —
+a classic technique used to hijack contact forms for spam relay.
+
+FIX: All values used in email headers are now stripped of
+CR/LF characters before being sent, and the recipient/reply-to
+addresses are re-validated as proper email addresses.
+
+
+────────────────────────────────────────────────────────────
+ 8. MEDIUM — Product/category data embedded in the Calculator
+    page could break out of its <script> tag
+────────────────────────────────────────────────────────────
+calculator.php embeds all your products as JSON directly inside
+a <script> tag for the calculator to use. If a product name ever
+contained the text "</script>", it could close the script tag
+early and let arbitrary HTML/JS run on that page (stored XSS).
+Low real-world risk since only you (admin) can set product
+names, but worth closing properly.
+
+FIX: JSON output now uses JSON_HEX_TAG and related flags so
+special characters are safely escaped for embedding in HTML.
+
+
+────────────────────────────────────────────────────────────
+ 9. LOW — Product video URL had no scheme restriction
+────────────────────────────────────────────────────────────
+The "Product Video" field accepted any URL and embedded it
+directly as an iframe. In theory a javascript: or data: URL
+could have been entered (again, only by you/admin, but still
+worth restricting as defense-in-depth).
+
+FIX: Only proper http:// and https:// URLs are now accepted;
+anything else is rejected.
+
+
+────────────────────────────────────────────────────────────
+ 10. LOW — PHP errors were shown on-screen by default
+────────────────────────────────────────────────────────────
+display_errors was hardcoded ON. If any unexpected error
+happened on a live site, visitors could see full file paths,
+database query fragments, or other internal details on-screen —
+useful information for an attacker probing your site.
+
+FIX: Controlled by a new APP_DEBUG setting in .env (defaults to
+false/off — safe for production). Set APP_DEBUG=true only while
+actively developing on your local machine.
+
+
+────────────────────────────────────────────────────────────
+ 11. LOW — Session cookie missing security flags
+────────────────────────────────────────────────────────────
+The admin session cookie didn't explicitly set HttpOnly, SameSite,
+or Secure flags, and the session ID wasn't regenerated on login
+(a gap that enables "session fixation" attacks in some setups).
+
+FIX: Session cookie now sets HttpOnly (JavaScript can't read it,
+blocking cookie theft via XSS), SameSite=Lax (blocks it being
+sent on most cross-site requests), Secure automatically when
+served over HTTPS, and the session ID is regenerated every time
+someone successfully logs in.
+
+
+────────────────────────────────────────────────────────────
+ BONUS — Spam/flood protection added
+────────────────────────────────────────────────────────────
+The public contact form and CCTV calculator had no submission
+limits — a bot could flood your database and inbox with fake
+leads. Both now allow a maximum of 5 submissions per 5 minutes
+per visitor IP.
+
+
+============================================================
+  FILES CHANGED
+============================================================
+  .env                            ← added APP_DEBUG setting
+  .htaccess                       ← Apache 2.4 fix + locked-down folders
+  uploads/.htaccess               ← NEW — disables script execution
+  config/config.php               ← debug toggle, hardened session cookies
+  includes/functions.php          ← CSRF, rate-limit, brute-force helpers;
+                                      hardened adminLogin(), generateRefCode(),
+                                      uploadProductImage(), getYouTubeEmbedUrl()
+  includes/SmtpMailer.php         ← header injection protection
+  db-check.php                    ← now requires admin login
+  calculator.php                  ← JSON XSS hardening
+  contact-submit.php              ← rate limiting
+  calculator-submit.php           ← rate limiting
+  assets/css/admin.css            ← minor style fix for delete buttons
+  admin/login.php                 ← CSRF token, brute-force lockout
+  admin/product-add.php           ← CSRF token
+  admin/product-edit.php          ← CSRF token (both the form and the
+                                      AJAX image-delete endpoint)
+  admin/product-delete.php        ← converted GET → POST, CSRF required
+  admin/category-add.php          ← CSRF token
+  admin/category-edit.php         ← CSRF token
+  admin/category-delete.php       ← converted GET → POST, CSRF required
+  admin/products.php              ← delete button converted to CSRF-safe form
+  admin/categories.php            ← delete button converted to CSRF-safe form
+  admin/index.php                 ← delete button converted to CSRF-safe form
+  admin/calculator-requests.php   ← CSRF token
+  admin/calculator-request-view.php ← CSRF token
+  admin/calculator-settings.php   ← CSRF token
+  admin/contact-messages.php      ← CSRF token
+  admin/email-test.php            ← CSRF token
+
+
+============================================================
+  HOW TO APPLY THIS UPDATE
+============================================================
+No database changes needed for this patch — just replace every
+file listed above with the version from this ZIP (same folder
+structure, overwrite the old ones).
+
+After updating, do this:
+
+1. Log out and log back in to the admin panel (this refreshes
+   your session with the new hardened cookie settings).
+
+2. Open your .env file and confirm APP_DEBUG=false (this should
+   already be the default — just double check).
+
+3. DELETE db-check.php entirely once you're sure your database
+   connection is working — it's a diagnostic tool that should
+   not remain on a live production site, even though it's now
+   login-protected.
+
+4. If your site is hosted on a real server (not XAMPP), reload
+   Apache/restart the site after uploading the new .htaccess
+   files so the updated rules take effect.
+
+5. Test that admin login, adding a product, deleting a product,
+   and the contact form still all work normally.
+
+
+============================================================
+  ONGOING RECOMMENDATIONS (not code fixes, just good practice)
+============================================================
+- Use a strong, unique ADMIN_PASSWORD (not the default shipped
+  one) — this remains your single most important defense.
+- Keep regular backups of your database and uploads/ folder.
+- If you ever suspect a breach, change ADMIN_PASSWORD and your
+  Gmail App Password immediately, and check the admins/products
+  tables for anything unexpected.
+- Consider adding HTTPS (SSL) if not already using it — without
+  it, login credentials travel over the network unencrypted.
+
+============================================================

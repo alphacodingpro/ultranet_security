@@ -1,0 +1,86 @@
+============================================================
+  BUGFIX: Main Image Not Changing + YouTube Video Not Playing
+============================================================
+
+BUG 1 — Main image never updates, stays on default
+-----------------------------------------------------
+ROOT CAUSE:
+  In admin/product-edit.php, the "Additional Images" uploader
+  always treated a new upload as an EXTRA image whenever the
+  product already had a main image — there was no way to
+  actually replace the main photo. That's why it always looked
+  "stuck" on the same image (or the placeholder, if the main
+  image file was missing/broken).
+
+FIX:
+  Admin → Edit Product now has a dedicated "Main Image" box.
+  Click directly on the main image thumbnail to open a file
+  picker and upload a replacement — this is now a completely
+  separate uploader from "Additional Images", so it always
+  replaces the main photo (and deletes the old file). A preview
+  updates instantly, and a checkmark confirms the new file is
+  queued before you click "Update Product".
+
+  Also added: image URLs now include a cache-busting version
+  tag (?v=<file time>) so browsers never keep showing an old
+  cached image after you replace one.
+
+
+BUG 2 — YouTube video doesn't play in the product slider
+-------------------------------------------------------------
+ROOT CAUSE:
+  This was a classic browser quirk: the video `<iframe>` started
+  with `src=""` and JavaScript was supposed to fill it in only
+  when the "Video" tab was clicked (to save bandwidth). But
+  reading `frame.src` in JavaScript on an iframe with an empty
+  src attribute does NOT return an empty string — browsers
+  resolve it to the current page's own URL. So the check
+  `if (!frame.src)` was always false, and the real video URL
+  was never inserted. The tab looked fine, but the video never
+  loaded.
+
+  We also tightened the YouTube URL matching (getYouTubeEmbedUrl)
+  to handle links where extra parameters appear before the video
+  ID, e.g. youtube.com/watch?list=xxx&v=VIDEOID — previously only
+  "?v=ID" as the very first parameter was recognised.
+
+FIX:
+  The video is now embedded directly by PHP when the page loads
+  (no more fragile JS lazy-loading trick). Clicking the "Video"
+  tab simply shows/hides it — completely removing that bug class.
+  If a video URL can't be parsed, you'll now see a clear message
+  instead of a silently blank tab.
+
+
+FILES CHANGED
+-------------
+  includes/functions.php     ← productImageUrl() cache-busting,
+                                 getYouTubeEmbedUrl() more robust
+  admin/product-edit.php     ← new "click-to-replace" main image
+                                 uploader + fixed video preview regex
+  admin/product-add.php      ← fixed video preview regex (minor)
+  product.php                ← video now loads eagerly, no more
+                                 broken lazy-load JS
+
+
+============================================================
+  HOW TO APPLY THIS FIX
+============================================================
+
+No database changes needed — just replace these 4 files in your
+project with the updated versions from this ZIP:
+
+  includes/functions.php
+  admin/product-edit.php
+  admin/product-add.php
+  product.php
+
+Then test:
+  1. Admin → Edit any product → click the "Main Image" thumbnail
+     → choose a new photo → Update Product → check the product
+     card / product page shows the NEW image.
+  2. Admin → Edit a product → paste a YouTube link in "Product
+     Video" → Update Product → open that product on the site →
+     click the "Video" tab → it should play immediately.
+
+============================================================

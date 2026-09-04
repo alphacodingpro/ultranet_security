@@ -1,0 +1,124 @@
+/* =============================================
+   UltraNet Security – Admin Panel CSS
+   ============================================= */
+:root {
+  --admin-sidebar-w: 240px;
+  --admin-topbar-h: 58px;
+  --admin-bg: #f4f6fb;
+  --admin-primary: #0a1628;
+  --admin-accent: #e63946;
+  --admin-border: #e0e4ef;
+  --admin-card: #ffffff;
+  --admin-muted: #6c757d;
+  --admin-shadow: 0 2px 16px rgba(10,22,40,.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--admin-bg); color: #1a2744; }
+
+.admin-topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: var(--admin-topbar-h); background: var(--admin-primary);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+.admin-topbar-left { display: flex; align-items: center; gap: 14px; }
+.sidebar-toggle { background: none; border: none; color: #a8bcd4; font-size: 20px; cursor: pointer; padding: 6px; border-radius: 6px; line-height: 1; transition: background .2s, color .2s; }
+.sidebar-toggle:hover { background: rgba(255,255,255,.08); color: #fff; }
+.admin-brand { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #fff !important; text-decoration: none; display: flex; align-items: center; gap: 8px; letter-spacing: .5px; }
+.admin-brand i { color: var(--admin-accent); font-size: 18px; }
+.admin-brand em { color: var(--admin-accent); font-style: normal; }
+.admin-topbar-right { display: flex; align-items: center; gap: 10px; }
+.admin-topbar-link { color: #a8bcd4; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 10px; border-radius: 7px; display: flex; align-items: center; gap: 6px; transition: background .2s, color .2s; }
+.admin-topbar-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+.admin-topbar-link.text-danger:hover { background: rgba(220,53,69,.15); color: #ff6b78; }
+.admin-user-info { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #cdd5e0; font-weight: 500; }
+.admin-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(230,57,70,.25); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--admin-accent); }
+
+.admin-sidebar { position: fixed; top: var(--admin-topbar-h); left: 0; bottom: 0; z-index: 900; width: var(--admin-sidebar-w); background: #06111f; overflow-y: auto; overflow-x: hidden; transition: transform .3s ease; }
+.sidebar-nav { list-style: none; padding: 16px 0; }
+.sidebar-section { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #3a5a7a; padding: 14px 20px 6px; line-height: 1; }
+.sidebar-nav li a { display: flex; align-items: center; gap: 11px; padding: 10px 20px; font-size: 14px; font-weight: 500; color: #8fa8c4; text-decoration: none; border-left: 3px solid transparent; transition: background .2s, color .2s, border-color .2s; }
+.sidebar-nav li a:hover { background: rgba(255,255,255,.04); color: #cdd5e0; }
+.sidebar-nav li a.active { background: rgba(230,57,70,.12); color: #fff; border-left-color: var(--admin-accent); font-weight: 600; }
+.sidebar-nav li a.text-danger-link { color: #ff6b78; }
+.sidebar-nav li a i { width: 18px; text-align: center; font-size: 15px; }
+
+.admin-main { margin-left: var(--admin-sidebar-w); margin-top: var(--admin-topbar-h); min-height: calc(100vh - var(--admin-topbar-h)); transition: margin-left .3s ease; }
+.admin-content { padding: 28px 28px 40px; }
+
+.admin-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.admin-page-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--admin-primary); letter-spacing: .5px; margin: 0; }
+.admin-page-title i { color: var(--admin-accent); }
+
+.admin-card { background: var(--admin-card); border-radius: 14px; border: 1px solid var(--admin-border); box-shadow: var(--admin-shadow); overflow: hidden; }
+.admin-card-header { padding: 16px 22px; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; justify-content: space-between; }
+.admin-card-header h5 { font-size: 15px; font-weight: 600; margin: 0; color: var(--admin-primary); }
+.admin-card-body { padding: 22px; }
+
+.stat-card { background: var(--admin-card); border-radius: 12px; border: 1px solid var(--admin-border); box-shadow: var(--admin-shadow); padding: 20px; display: flex; align-items: center; gap: 16px; }
+.stat-icon { width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 36px; line-height: 1; }
+.stat-label { font-size: 13px; color: var(--admin-muted); margin-top: 2px; }
+
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table thead tr { background: var(--admin-bg); }
+.admin-table th { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--admin-muted); padding: 13px 16px; text-align: left; white-space: nowrap; }
+.admin-table td { padding: 13px 16px; border-top: 1px solid var(--admin-border); font-size: 14px; vertical-align: middle; }
+.admin-table tbody tr:hover { background: rgba(230,57,70,.02); }
+.admin-prod-thumb { width: 52px; height: 44px; object-fit: cover; border-radius: 7px; border: 1px solid var(--admin-border); }
+
+.status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 50px; display: inline-block; }
+.status-active   { background: rgba(40,167,69,.12);  color: #28a745; }
+.status-inactive { background: rgba(108,117,125,.12); color: #6c757d; }
+.status-order    { background: rgba(255,165,0,.12);   color: #e07b00; }
+.badge-featured  { background: rgba(244,162,97,.15); color: #c87818; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 50px; }
+
+.action-btns { display: flex; gap: 6px; }
+.action-btn { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; text-decoration: none; transition: all .2s; }
+.action-btn.view   { background: rgba(13,110,253,.1);  color: #0d6efd; }
+.action-btn.edit   { background: rgba(255,165,0,.1);   color: #e07b00; }
+.action-btn.delete { background: rgba(220,53,69,.1);   color: #dc3545; }
+.action-btn.view:hover   { background: #0d6efd; color: #fff; }
+.action-btn.edit:hover   { background: #e07b00; color: #fff; }
+.action-btn.delete:hover { background: #dc3545; color: #fff; }
+button.action-btn { font-family: inherit; cursor: pointer; }
+
+.form-label.fw-600 { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.form-control, .form-select { border: 1px solid var(--admin-border); border-radius: 9px; padding: 10px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+.form-control:focus, .form-select:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(230,57,70,.1); }
+
+.upload-area { border: 2px dashed var(--admin-border); border-radius: 10px; padding: 24px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+.upload-area:hover, .upload-area.drag-over { border-color: var(--admin-accent); background: rgba(230,57,70,.03); }
+.upload-input { display: none; }
+
+.btn-admin-primary { background: var(--admin-accent); color: #fff !important; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; transition: background .2s, transform .2s; }
+.btn-admin-primary:hover { background: #c62836; transform: translateY(-1px); }
+.btn-admin-secondary { background: rgba(10,22,40,.07); color: var(--admin-primary) !important; border: 1px solid var(--admin-border); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; transition: background .2s; }
+.btn-admin-secondary:hover { background: rgba(10,22,40,.12); }
+.btn-admin-outline { background: transparent; color: var(--admin-primary) !important; border: 1.5px solid var(--admin-border); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; transition: all .2s; }
+.btn-admin-outline:hover { border-color: var(--admin-accent); color: var(--admin-accent) !important; }
+.btn-admin-sm { background: var(--admin-accent); color: #fff; border: none; padding: 6px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.btn-admin-sm:hover { background: #c62836; color: #fff; }
+.btn-admin-login { background: var(--admin-accent); color: #fff; border: none; padding: 13px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background .2s; }
+.btn-admin-login:hover { background: #c62836; }
+.btn-sm { font-size: 13px; padding: 7px 14px; }
+
+.admin-login-page { background: linear-gradient(135deg,#0a1628 0%,#06111f 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.login-wrap { width: 100%; max-width: 420px; padding: 20px; }
+.login-card { background: #fff; border-radius: 20px; padding: 40px 36px; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+.login-logo { text-align: center; margin-bottom: 28px; }
+.login-icon { width: 64px; height: 64px; background: var(--admin-accent); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; margin: 0 auto 12px; }
+.login-brand { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--admin-primary); }
+.login-brand span { color: var(--admin-accent); }
+.login-subtitle { color: var(--admin-muted); font-size: 14px; margin-top: 4px; }
+.toggle-pass { cursor: pointer; background: var(--admin-bg) !important; border-left: none !important; }
+
+@media (max-width: 768px) {
+  .admin-sidebar { transform: translateX(-100%); }
+  .admin-sidebar.open { transform: translateX(0); }
+  .admin-main { margin-left: 0; }
+  .admin-content { padding: 18px 16px 30px; }
+  .admin-page-title { font-size: 24px; }
+  .stat-card { padding: 14px; }
+  .stat-num { font-size: 28px; }
+}

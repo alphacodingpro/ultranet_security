@@ -1,0 +1,30 @@
+# ============================================================
+#  Disable script execution inside the uploads folder.
+#  This is a defense-in-depth measure: even if an attacker
+#  somehow got a malicious script uploaded here (e.g. via a
+#  spoofed image), the web server will refuse to execute it —
+#  it can only ever be served as a static file (image, etc.)
+# ============================================================
+
+# Apache 2.4+
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .phar
+
+<FilesMatch "\.(php|phtml|php\d|phar|pl|py|cgi|sh|asp|aspx|exe)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+Options -Indexes -ExecCGI
