@@ -1,0 +1,14 @@
+name: cPanel Auto Deploy
+
+on:
+  push:
+    branches:
+      - main  # Agar aap ka branch master hai to yahan master likhein
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Webhook Call to cPanel
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.CPANEL_TOCKEN}}" "https://hosterpk.com"
