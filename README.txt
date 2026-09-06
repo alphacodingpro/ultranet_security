@@ -203,5 +203,5 @@ Before going live:
 [ ] Replace all placeholder images in assets/img/
 
 ============================================================
-Built for UltraNet Security, Karachi | 2025
+Built for UltraNet Security, Karachi | 2026
 ============================================================
