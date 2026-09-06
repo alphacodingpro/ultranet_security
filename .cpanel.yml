@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/ultranet/public_html/
+    - /usr/bin/rsync -rlptDv --exclude='.git' --exclude='.cpanel.yml' --exclude='.env' --exclude='uploads/' ./ $DEPLOYPATH
