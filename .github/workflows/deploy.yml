@@ -1,14 +1,25 @@
-name: cPanel Auto Deploy
+name: Deploy Website to cPanel
 
 on:
   push:
     branches:
-      - main  # Agar aap ka branch master hai to yahan master likhein
+      - main  # Agar aapka main branch ka naam 'master' hai to yahan master likhein
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Webhook Call to cPanel
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.CPANEL_TOCKEN}}" "https://hosterpk.com"
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Deploy to cPanel via rsync
+      uses: AEnterprise/rsync-deploy@v1.0.2
+      env:
+        DEPLOY_KEY: ${{ secrets.ULTRANET_SSH_KEY }}
+        ARGS: "-avzr --delete"
+        SERVER_PORT: ${{ secrets.SSH_PORT }}
+        FOLDER: "/home/ultranet/repositories"  # Aapki repository ka wo folder jo upload karna hai (. matlab poori repo)
+        SERVER_IP: ${{ secrets.SSH_HOST }}
+        USERNAME: ${{ secrets.SSH_USER }}
+        SERVER_DESTINATION: "/home/ultranet/public_html/"  # Yahan apna cPanel username zaroor change karein
