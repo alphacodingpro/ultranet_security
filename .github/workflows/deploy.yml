@@ -16,7 +16,7 @@ jobs:
     - name: Deploy to cPanel via rsync
       uses: AEnterprise/rsync-deploy@v1.0.2
       env:
-        DEPLOY_KEY: ${{ secrets.ULTRANET_SSH_KEY }}
+        DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         ARGS: "-avzr --delete"
         SERVER_PORT: ${{ secrets.SSH_PORT }}
         FOLDER: "/home/ultranet/repositories"  # Aapki repository ka wo folder jo upload karna hai (. matlab poori repo)
