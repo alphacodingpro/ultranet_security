@@ -1,6 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/ultranet/public_html/
-    - /bin/cp -R * $DEPLOYPATH
-    - /bin/rm -rf $DEPLOYPATH/repositories
