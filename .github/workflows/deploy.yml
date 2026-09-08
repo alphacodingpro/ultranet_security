@@ -3,7 +3,7 @@ name: Deploy Website via FTP
 on:
   push:
     branches:
-      - main  # Agar aapke branch ka naam master hai to yahan master likhein
+      - main  # Agar branch master hai to master likhein
 
 jobs:
   web-deploy:
@@ -20,4 +20,12 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ./  # Yeh files ko seedha public_html folder mein push karega
+        server-dir: ./
+        # Niche wali lines aapki files aur folders ko cPanel par update hone se bachayengi:
+        sync-ignored: |
+          .env
+          **/uploads/products**
+          **/img/**
+          **/assets/img/**
+          .git/
+          .github/
