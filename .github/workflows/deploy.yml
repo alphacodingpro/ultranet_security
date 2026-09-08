@@ -1,25 +1,23 @@
-name: Deploy Website to cPanel
+name: Deploy Website via FTP
 
 on:
   push:
     branches:
-      - main  # Agar aapka main branch ka naam 'master' hai to yahan master likhein
+      - main  # Agar aapke branch ka naam master hai to yahan master likhein
 
 jobs:
-  deploy:
+  web-deploy:
+    name: Deploying to cPanel
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout Repository
+    - name: Get latest code
       uses: actions/checkout@v3
-
-    - name: Deploy to cPanel via rsync
-      uses: AEnterprise/rsync-deploy@v1.0.2
-      env:
-        DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avzr --delete"
-        SERVER_PORT: ${{ secrets.SSH_PORT }}
-        FOLDER: "/home/ultranet/repositories"  # Aapki repository ka wo folder jo upload karna hai (. matlab poori repo)
-        SERVER_IP: ${{ secrets.SSH_HOST }}
-        USERNAME: ${{ secrets.SSH_USER }}
-        SERVER_DESTINATION: "/home/ultranet/public_html/"  # Yahan apna cPanel username zaroor change karein
+    
+    - name: Sync files to Server
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ./  # Yeh files ko seedha public_html folder mein push karega
