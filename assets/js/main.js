@@ -4,6 +4,29 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  /* ── COLOR THEME ── */
+  const themeToggle = document.querySelector('.theme-toggle');
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  const setTheme = (theme) => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    if (themeToggle) {
+      const isDark = theme === 'dark';
+      themeToggle.setAttribute('aria-pressed', String(isDark));
+      themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      themeToggle.querySelector('i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      themeToggle.querySelector('.theme-toggle-label').textContent = isDark ? 'Light mode' : 'Dark mode';
+    }
+    if (themeColor) themeColor.setAttribute('content', theme === 'dark' ? '#101827' : '#e63946');
+  };
+
+  if (themeToggle) {
+    setTheme(document.documentElement.dataset.theme || 'light');
+    themeToggle.addEventListener('click', () => {
+      setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
   /* ── SCROLL REVEAL ── */
   const revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length) {

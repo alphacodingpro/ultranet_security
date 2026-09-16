@@ -58,6 +58,14 @@ $searchQuery  = h($_GET['q'] ?? '');
   <link rel="manifest"         href="<?= SITE_URL ?>/site.webmanifest">
   <meta name="theme-color"    content="#e63946">
 
+  <script>
+    (function () {
+      var savedTheme = localStorage.getItem('theme');
+      var theme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.theme = theme;
+    }());
+  </script>
+
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -135,8 +143,12 @@ $searchQuery  = h($_GET['q'] ?? '');
       <div class="brand-icon"><i class="fa-solid fa-camera"></i></div>
       UltraNet <span>Security</span>
     </a>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <i class="fa-solid fa-moon" aria-hidden="true"></i>
+      <span class="theme-toggle-label">Dark mode</span>
+    </button>
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
-      <i class="fa-solid fa-bars fs-4 text-dark"></i>
+      <i class="fa-solid fa-bars fs-4"></i>
     </button>
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav me-auto align-items-lg-center">
