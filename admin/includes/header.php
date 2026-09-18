@@ -62,6 +62,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <i class="fa-solid fa-circle-plus"></i> Add Product
       </a>
     </li>
+    <li>
+      <a href="<?= ADMIN_URL ?>/product-import.php" class="<?= $currentPage === 'product-import.php' ? 'active' : '' ?>">
+        <i class="fa-solid fa-file-csv"></i> Bulk CSV Upload
+      </a>
+    </li>
     <li class="sidebar-section">CATEGORIES</li>
     <li>
       <a href="<?= ADMIN_URL ?>/categories.php" class="<?= in_array($currentPage,['categories.php','category-add.php','category-edit.php']) ? 'active' : '' ?>">
