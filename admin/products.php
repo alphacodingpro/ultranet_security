@@ -45,7 +45,10 @@ include __DIR__ . '/includes/header.php';
 
 <div class="admin-page-header">
   <h1 class="admin-page-title"><i class="fa-solid fa-camera me-2"></i>All Products <span class="badge bg-secondary"><?= count($products) ?></span></h1>
-  <a href="<?= ADMIN_URL ?>/product-add.php" class="btn-admin-primary"><i class="fa-solid fa-plus me-1"></i>Add Product</a>
+  <div class="d-flex gap-2">
+    <a href="<?= ADMIN_URL ?>/product-import.php" class="btn-admin-outline"><i class="fa-solid fa-file-csv me-1"></i>Bulk Upload</a>
+    <a href="<?= ADMIN_URL ?>/product-add.php" class="btn-admin-primary"><i class="fa-solid fa-plus me-1"></i>Add Product</a>
+  </div>
 </div>
 
 <?php showFlash(); ?>
