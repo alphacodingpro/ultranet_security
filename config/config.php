@@ -55,6 +55,10 @@ define('SMTP_FROM_EMAIL',   env('SMTP_FROM_EMAIL', env('SMTP_USERNAME', '')));
 define('SMTP_FROM_NAME',    env('SMTP_FROM_NAME', SITE_NAME));
 define('ADMIN_NOTIFY_EMAIL',env('ADMIN_NOTIFY_EMAIL', env('SMTP_USERNAME', '')));
 
+// --- Product source research (keep token in cPanel .env only) ---
+define('APIFY_API_TOKEN', env('APIFY_API_TOKEN', ''));
+define('APIFY_SEARCH_ACTOR', env('APIFY_SEARCH_ACTOR', 'apify/google-search-scraper'));
+
 // --- Error reporting ---
 // Controlled by APP_DEBUG in .env — defaults to OFF (safe for production).
 // Leaving display_errors on in production can leak file paths / DB details.
