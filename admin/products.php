@@ -38,6 +38,7 @@ $st = $db->prepare($sql);
 $st->execute($params);
 $products   = $st->fetchAll();
 $categories = getAllCategories();
+$brands     = getAllBrands();
 
 $adminPageTitle = 'All Products';
 include __DIR__ . '/includes/header.php';
@@ -52,6 +53,19 @@ include __DIR__ . '/includes/header.php';
 </div>
 
 <?php showFlash(); ?>
+
+<!-- EXPORT -->
+<div class="admin-card mb-4">
+  <div class="admin-card-body">
+    <form method="GET" action="<?= ADMIN_URL ?>/product-export.php" class="row g-2 align-items-end">
+      <div class="col-12 col-md-3"><label class="form-label small mb-1">Export category</label><select name="cat" class="form-select form-select-sm"><option value="">All Categories</option><?php foreach ($categories as $cat): ?><option value="<?= $cat['id'] ?>"><?= h($cat['name']) ?></option><?php endforeach; ?></select></div>
+      <div class="col-6 col-md-3"><label class="form-label small mb-1">Export brand</label><select name="brand" class="form-select form-select-sm"><option value="">All Brands</option><?php foreach ($brands as $itemBrand): ?><option value="<?= h($itemBrand) ?>"><?= h($itemBrand) ?></option><?php endforeach; ?></select></div>
+      <div class="col-6 col-md-2"><label class="form-label small mb-1">Status</label><select name="status" class="form-select form-select-sm"><option value="">All</option><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+      <div class="col-12 col-md-2"><label class="form-label small mb-1">Search</label><input type="text" name="q" class="form-control form-control-sm" placeholder="Name, brand, SKU"></div>
+      <div class="col-12 col-md-2"><button type="submit" class="btn-admin-outline btn-sm w-100"><i class="fa-solid fa-download me-1"></i>Export CSV</button></div>
+    </form>
+  </div>
+</div>
 
 <!-- FILTERS -->
 <div class="admin-card mb-4">
