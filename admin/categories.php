@@ -6,9 +6,10 @@ requireAdminLogin();
 
 $db         = getDB();
 $categories = $db->query(
-    'SELECT c.*, COUNT(p.id) as product_count FROM categories c
+    'SELECT c.*, parent.name AS parent_name, COUNT(p.id) as product_count FROM categories c
+     LEFT JOIN categories parent ON parent.id = c.parent_id
      LEFT JOIN products p ON p.category_id = c.id
-     GROUP BY c.id ORDER BY c.name ASC'
+     GROUP BY c.id ORDER BY COALESCE(parent.name, c.name) ASC, c.parent_id IS NOT NULL, c.name ASC'
 )->fetchAll();
 
 $adminPageTitle = 'Categories';
@@ -31,6 +32,7 @@ include __DIR__ . '/includes/header.php';
             <th>#</th>
             <th>Icon</th>
             <th>Name</th>
+            <th>Parent / Brand</th>
             <th>Slug (SEO URL)</th>
             <th>Description</th>
             <th>Products</th>
@@ -45,6 +47,10 @@ include __DIR__ . '/includes/header.php';
             <td class="text-muted small"><?= $cat['id'] ?></td>
             <td><i class="<?= h($cat['icon']) ?> fa-lg" style="color:var(--accent)"></i></td>
             <td><strong><?= h($cat['name']) ?></strong></td>
+            <td class="small">
+              <?= $cat['parent_name'] ? h($cat['parent_name']) : '<span class="text-muted">Main category</span>' ?>
+              <?php if (!empty($cat['brand'])): ?><br><span class="badge bg-secondary"><?= h($cat['brand']) ?></span><?php endif; ?>
+            </td>
             <td><code class="small">/products.php?category=<?= h($cat['slug']) ?></code></td>
             <td class="text-muted small"><?= h(substr($cat['description'] ?? '—', 0, 60)) ?></td>
             <td>
@@ -79,7 +85,7 @@ include __DIR__ . '/includes/header.php';
           </tr>
           <?php endforeach; ?>
           <?php else: ?>
-          <tr><td colspan="8" class="text-center py-4 text-muted">No categories yet. <a href="<?= ADMIN_URL ?>/category-add.php">Add first category →</a></td></tr>
+          <tr><td colspan="9" class="text-center py-4 text-muted">No categories yet. <a href="<?= ADMIN_URL ?>/category-add.php">Add first category →</a></td></tr>
           <?php endif; ?>
         </tbody>
       </table>
