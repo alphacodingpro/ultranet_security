@@ -17,7 +17,7 @@ $homeFaqs = [
 $extraSchema = [schemaFaqPage($homeFaqs)];
 
 $featuredProducts = getProducts(['featured' => true]);
-$categories       = getAllCategories();
+$categories       = getFeaturedCategories();
 
 include __DIR__ . '/includes/header.php';
 ?>
@@ -69,6 +69,7 @@ include __DIR__ . '/includes/header.php';
 </div>
 
 <!-- CATEGORIES -->
+<?php if ($categories): ?>
 <section class="py-5" style="background:var(--light-bg)">
   <div class="container">
     <div class="text-center mb-4 reveal">
@@ -90,6 +91,7 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 </section>
+<?php endif; ?>
 
 <!-- FEATURED PRODUCTS -->
 <?php if ($featuredProducts): ?>
