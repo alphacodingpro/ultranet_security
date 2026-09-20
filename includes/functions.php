@@ -33,6 +33,53 @@ function getAllCategories(): array
     return $db->query('SELECT * FROM categories ORDER BY name ASC')->fetchAll();
 }
 
+function getRootCategories(): array
+{
+    $db = getDB();
+    try {
+        return $db->query('SELECT * FROM categories WHERE parent_id IS NULL ORDER BY name ASC')->fetchAll();
+    } catch (PDOException $e) {
+        return getAllCategories();
+    }
+}
+
+function getChildCategories(int $parentId, string $brand = ''): array
+{
+    $db = getDB();
+    try {
+        $sql = 'SELECT * FROM categories WHERE parent_id = ?';
+        $params = [$parentId];
+        if ($brand !== '') {
+            $sql .= ' AND brand = ?';
+            $params[] = $brand;
+        }
+        $sql .= ' ORDER BY name ASC';
+        $st = $db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+function getCategoryBrands(int $parentId): array
+{
+    $db = getDB();
+    try {
+        $st = $db->prepare(
+            'SELECT DISTINCT COALESCE(NULLIF(c.brand, ""), p.brand) AS brand
+             FROM categories c
+             LEFT JOIN products p ON p.category_id = c.id AND p.status = "active"
+             WHERE c.parent_id = ? AND COALESCE(NULLIF(c.brand, ""), p.brand) IS NOT NULL
+             ORDER BY brand ASC'
+        );
+        $st->execute([$parentId]);
+        return $st->fetchAll(PDO::FETCH_COLUMN);
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
 function getFeaturedCategories(): array
 {
     $db = getDB();
@@ -97,9 +144,40 @@ function getProducts(array $opts = []): array
             WHERE ' . implode(' AND ', $where) . '
             ORDER BY p.featured DESC, p.id DESC';
 
+    if (isset($opts['limit'])) {
+        $limit = max(1, (int)$opts['limit']);
+        $offset = max(0, (int)($opts['offset'] ?? 0));
+        $sql .= " LIMIT {$limit} OFFSET {$offset}";
+    }
+
     $st = $db->prepare($sql);
     $st->execute($params);
     return $st->fetchAll();
+}
+
+function countProducts(array $opts = []): int
+{
+    $db = getDB();
+    $where = ['p.status = "active"'];
+    $params = [];
+
+    if (!empty($opts['category_id'])) {
+        $where[] = 'p.category_id = ?';
+        $params[] = (int)$opts['category_id'];
+    }
+    if (!empty($opts['brand'])) {
+        $where[] = 'p.brand = ?';
+        $params[] = $opts['brand'];
+    }
+    if (!empty($opts['search'])) {
+        $where[] = '(p.name LIKE ? OR p.brand LIKE ? OR p.short_desc LIKE ?)';
+        $kw = '%' . $opts['search'] . '%';
+        array_push($params, $kw, $kw, $kw);
+    }
+
+    $st = $db->prepare('SELECT COUNT(*) FROM products p WHERE ' . implode(' AND ', $where));
+    $st->execute($params);
+    return (int)$st->fetchColumn();
 }
 
 function getProductBySlug(string $slug): ?array
@@ -269,10 +347,11 @@ function showFlash(): void
 function paginate(int $total, int $perPage, int $current): array
 {
     $totalPages = max(1, (int)ceil($total / $perPage));
+    $current = max(1, min($current, $totalPages));
     return [
         'total'      => $total,
         'per_page'   => $perPage,
-        'current'    => max(1, min($current, $totalPages)),
+        'current'    => $current,
         'total_pages'=> $totalPages,
         'offset'     => ($current - 1) * $perPage,
     ];
