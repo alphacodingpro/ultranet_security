@@ -142,6 +142,10 @@ section{padding:84px 0}
 .filter-list a{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;font-size:14px;color:var(--primary);text-decoration:none;transition:all .2s}
 .filter-list a:hover,.filter-list a.active{background:rgba(230,57,70,.08);color:var(--accent)}
 .filter-list a.active{font-weight:600}
+.product-pagination{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}
+.product-page-link{min-width:40px;height:40px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;background:var(--surface,#fff);color:var(--primary);font-weight:700;text-decoration:none;transition:all .2s}
+.product-page-link:hover,.product-page-link.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.product-page-link.disabled{pointer-events:none;opacity:.4}
 
 /* SERVICES SECTION */
 .services{background:var(--light-bg)}
