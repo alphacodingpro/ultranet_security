@@ -5,7 +5,8 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 requireAdminLogin();
 
 $errors = [];
-$input  = ['name'=>'','slug'=>'','description'=>'','icon'=>'fa-solid fa-camera','featured'=>0];
+$input  = ['name'=>'','slug'=>'','description'=>'','icon'=>'fa-solid fa-camera','parent_id'=>0,'brand'=>'','featured'=>0];
+$parentCategories = getRootCategories();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrf();
@@ -14,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'slug'        => slugify(trim($_POST['slug'] ?? $_POST['name'] ?? '')),
         'description' => trim($_POST['description'] ?? ''),
         'icon'        => trim($_POST['icon'] ?? 'fa-solid fa-camera'),
+        'parent_id'   => (int)($_POST['parent_id'] ?? 0),
+        'brand'       => trim($_POST['brand'] ?? ''),
         'featured'    => isset($_POST['featured']) ? 1 : 0,
     ];
 
@@ -28,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($st->fetch()) {
             $input['slug'] .= '-' . time();
         }
-        $db->prepare('INSERT INTO categories (name,slug,description,icon,featured) VALUES (?,?,?,?,?)')
-           ->execute([$input['name'], $input['slug'], $input['description'] ?: null, $input['icon'], $input['featured']]);
+        $db->prepare('INSERT INTO categories (name,slug,description,icon,parent_id,brand,featured) VALUES (?,?,?,?,?,?,?)')
+           ->execute([$input['name'], $input['slug'], $input['description'] ?: null, $input['icon'], $input['parent_id'] ?: null, $input['brand'] ?: null, $input['featured']]);
         setFlash('success', 'Category "' . $input['name'] . '" added!');
         header('Location: ' . ADMIN_URL . '/categories.php');
         exit;
@@ -73,6 +76,21 @@ include __DIR__ . '/includes/header.php';
             <label class="form-label fw-600">Font Awesome Icon Class</label>
             <input type="text" name="icon" class="form-control" value="<?= h($input['icon']) ?>" placeholder="e.g. fa-solid fa-camera">
             <small class="text-muted">Find icons at <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com/icons</a></small>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-600">Parent Category</label>
+              <select name="parent_id" class="form-select">
+                <option value="0">None — Main Category</option>
+                <?php foreach ($parentCategories as $parent): ?>
+                <option value="<?= $parent['id'] ?>" <?= (int)$input['parent_id'] === (int)$parent['id'] ? 'selected' : '' ?>><?= h($parent['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Brand</label>
+              <input type="text" name="brand" class="form-control" value="<?= h($input['brand']) ?>" placeholder="e.g. Hikvision">
+            </div>
           </div>
           <div class="form-check form-switch mb-4">
             <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" <?= !empty($input['featured']) ? 'checked' : '' ?>>
