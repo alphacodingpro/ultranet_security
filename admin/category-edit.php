@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'slug'        => slugify(trim($_POST['slug'] ?? '')),
         'description' => trim($_POST['description'] ?? ''),
         'icon'        => trim($_POST['icon'] ?? 'fa-solid fa-camera'),
+        'featured'    => isset($_POST['featured']) ? 1 : 0,
     ];
 
     if (!$input['name']) $errors[] = 'Category name is required.';
@@ -31,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $st->execute([$input['slug'], $id]);
         if ($st->fetch()) $input['slug'] .= '-' . time();
 
-        $db->prepare('UPDATE categories SET name=?,slug=?,description=?,icon=? WHERE id=?')
-           ->execute([$input['name'], $input['slug'], $input['description'] ?: null, $input['icon'], $id]);
+        $db->prepare('UPDATE categories SET name=?,slug=?,description=?,icon=?,featured=? WHERE id=?')
+           ->execute([$input['name'], $input['slug'], $input['description'] ?: null, $input['icon'], $input['featured'], $id]);
         setFlash('success', 'Category updated!');
         header('Location: ' . ADMIN_URL . '/categories.php');
         exit;
@@ -79,6 +80,11 @@ include __DIR__ . '/includes/header.php';
                      oninput="document.getElementById('iconPreview').className=this.value">
             </div>
             <small class="text-muted">Browse at <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com/icons</a></small>
+          </div>
+          <div class="form-check form-switch mb-4">
+            <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" <?= !empty($input['featured']) ? 'checked' : '' ?>>
+            <label class="form-check-label fw-600" for="featured">Show this category on homepage</label>
+            <div class="small text-muted">Turn this off to hide the category from the homepage without deleting it.</div>
           </div>
           <button type="submit" class="btn-admin-primary w-100 py-3">
             <i class="fa-solid fa-floppy-disk me-2"></i>Update Category
