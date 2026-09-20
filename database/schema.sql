@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `slug`        VARCHAR(140)  NOT NULL UNIQUE,
   `description` VARCHAR(500)  DEFAULT NULL,
   `icon`        VARCHAR(60)   DEFAULT 'fa-solid fa-camera',
+  `featured`    TINYINT(1)    NOT NULL DEFAULT 0,
   `created_at`  DATETIME      DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  DATETIME      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
