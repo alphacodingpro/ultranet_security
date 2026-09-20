@@ -51,6 +51,8 @@ include __DIR__ . '/includes/header.php';
 <div class="alert alert-danger mb-4"><ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= h($e) ?></li><?php endforeach; ?></ul></div>
 <?php endif; ?>
 
+<p><a class="btn-admin-primary" href="<?= ADMIN_URL ?>/calculator-budget-products.php">Configure Budget Package Products</a></p>
+
 <div class="row g-4">
   <div class="col-lg-6">
     <div class="admin-card mb-4">

@@ -109,6 +109,7 @@ include __DIR__ . '/includes/header.php';
     <p>Enter your requirements and instantly calculate the right cameras, NVR/DVR, hard disk storage, and PoE switch wattage for your property in Karachi.</p>
 
     <div class="calc-mode-toggle">
+      <a class="calc-mode-btn text-decoration-none" href="#budgetPackage"><i class="fa-solid fa-wallet"></i> Build by Budget</a>
       <button type="button" class="calc-mode-btn active" data-mode="calculate" id="modeCalculateBtn">
         <i class="fa-solid fa-calculator"></i> Just Calculate
       </button>
@@ -118,6 +119,8 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 </section>
+
+<?php include __DIR__ . '/includes/calculator-budget-form.php'; ?>
 
 <div class="container py-5">
   <div class="row g-4">
@@ -291,5 +294,6 @@ const SITE_URL  = "<?= SITE_URL ?>";
 const ASSETS_URL = "<?= ASSETS_URL ?>";
 </script>
 <script src="<?= ASSETS_URL ?>/js/calculator.js"></script>
+<script src="<?= ASSETS_URL ?>/js/calculator-budget.js"></script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

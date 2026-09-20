@@ -17,7 +17,27 @@ if (!checkRateLimit('calculator_form', 5, 300)) {
     respondError('Too many requests. Please wait a few minutes and try again, or WhatsApp us directly.');
 }
 
-if (!$body) respondError('Invalid request.');
+if (!is_array($body)) respondError('Invalid request.');
+
+// Rebuild budget packages using current catalog data; client item/price changes are ignored.
+$budgetPackage = null;
+if (isset($body['budget_request'])) {
+    require_once __DIR__ . '/includes/budget-package.php';
+    try {
+        if (!is_array($body['budget_request'])) throw new InvalidArgumentException('Invalid budget request.');
+        $budgetPackage = buildBudgetPackage($body['budget_request']);
+        if (!hash_equals($budgetPackage['fingerprint'], (string)($body['budget_fingerprint'] ?? ''))) {
+            respondError('Prices or availability changed. Please build your budget package again.');
+        }
+        $body = array_merge($body, $budgetPackage);
+    } catch (PDOException $e) {
+        respondError('Catalog temporarily unavailable. Please try again.');
+    } catch (InvalidArgumentException $e) {
+        respondError($e->getMessage());
+    } catch (RuntimeException $e) {
+        respondError($e->getMessage());
+    }
+}
 
 $name  = trim($body['client_name']  ?? '');
 $phone = trim($body['client_phone'] ?? '');
@@ -40,7 +60,7 @@ $clientItems = is_array($body['items'] ?? null) ? $body['items'] : [];
 if (empty($clientItems)) respondError('No package items selected.');
 
 // ── SERVER-SIDE RECALCULATION (never trust client prices) ──
-$requiredGb = calcRequiredHddGb($cameraCount, $resolution, $recDays, $recMode);
+$requiredGb = $budgetPackage ? $budgetPackage['required_hdd_gb'] : calcRequiredHddGb($cameraCount, $resolution, $recDays, $recMode);
 
 $db = getDB();
 $finalItems = [];
@@ -78,7 +98,7 @@ foreach ($clientItems as $ci) {
 
 if (empty($finalItems)) respondError('Selected products are no longer available.');
 
-$discountPct = (float)getSetting('package_discount_percent', 5);
+$discountPct = $budgetPackage ? $budgetPackage['discount_percent'] : (float)getSetting('package_discount_percent', 5);
 $discountAmt = round($subtotal * ($discountPct / 100), 2);
 $grandTotal  = round($subtotal - $discountAmt, 2);
 
@@ -95,6 +115,8 @@ if ($systemType === 'ip') {
     }
     $requiredWatts = calcRequiredPoeWatts($cameraCount, $wattsPer);
 }
+
+if ($budgetPackage) $requiredWatts = $budgetPackage['required_poe_watts'];
 
 try {
     $ref = saveCalculatorRequest([
