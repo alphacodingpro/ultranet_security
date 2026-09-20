@@ -802,6 +802,83 @@ function seoDescription(string $text, int $maxLen = 155): string
     return seoTruncate($text, $maxLen);
 }
 
+/** Render imported product text as escaped, structured HTML. */
+function formatProductDescriptionHtml(?string $description): string
+{
+    $description = trim((string)$description);
+    if ($description === '') return '';
+
+    $featuresMarker = 'Key features:';
+    $specsMarker = 'Technical specifications:';
+    $sourceMarker = 'Official product source:';
+    $featuresPos = stripos($description, $featuresMarker);
+    $specsPos = stripos($description, $specsMarker);
+    $sourcePos = stripos($description, $sourceMarker);
+
+    if ($featuresPos === false && $specsPos === false && $sourcePos === false) {
+        return '<div class="product-description-text">' . nl2br(h($description)) . '</div>';
+    }
+
+    $firstMarker = strlen($description);
+    foreach ([$featuresPos, $specsPos, $sourcePos] as $position) {
+        if ($position !== false) $firstMarker = min($firstMarker, $position);
+    }
+    $overview = trim(substr($description, 0, $firstMarker));
+
+    $extractSection = static function (string $text, string $marker, $start, array $endPositions): string {
+        if ($start === false) return '';
+        $contentStart = $start + strlen($marker);
+        $contentEnd = strlen($text);
+        foreach ($endPositions as $end) {
+            if ($end !== false && $end > $start) $contentEnd = min($contentEnd, $end);
+        }
+        return trim(substr($text, $contentStart, $contentEnd - $contentStart));
+    };
+
+    $featuresText = $extractSection($description, $featuresMarker, $featuresPos, [$specsPos, $sourcePos]);
+    $specsText = $extractSection($description, $specsMarker, $specsPos, [$sourcePos]);
+    $sourceText = $extractSection($description, $sourceMarker, $sourcePos, []);
+    $html = '<div class="product-description-sections">';
+
+    if ($overview !== '') {
+        $html .= '<section class="product-description-overview"><h3><i class="fa-solid fa-circle-info"></i> Overview</h3>'
+              . '<p>' . nl2br(h($overview)) . '</p></section>';
+    }
+
+    $features = array_values(array_filter(array_map('trim', explode(';', rtrim($featuresText, ". ")))));
+    if ($features) {
+        $html .= '<section class="product-description-features"><h3><i class="fa-solid fa-list-check"></i> Key Features</h3><ul>';
+        foreach ($features as $feature) {
+            $html .= '<li><i class="fa-solid fa-check"></i><span>' . h($feature) . '</span></li>';
+        }
+        $html .= '</ul></section>';
+    }
+
+    $specItems = array_values(array_filter(array_map('trim', explode(';', rtrim($specsText, ". ")))));
+    if ($specItems) {
+        $html .= '<section class="product-description-specs"><h3><i class="fa-solid fa-sliders"></i> Technical Specifications</h3>'
+              . '<div class="table-responsive"><table class="product-spec-table"><tbody>';
+        foreach ($specItems as $item) {
+            $parts = explode(':', $item, 2);
+            if (count($parts) === 2 && trim($parts[0]) !== '') {
+                $html .= '<tr><th scope="row">' . h(trim($parts[0])) . '</th><td>' . h(trim($parts[1])) . '</td></tr>';
+            } else {
+                $html .= '<tr><td colspan="2">' . h($item) . '</td></tr>';
+            }
+        }
+        $html .= '</tbody></table></div></section>';
+    }
+
+    $sourceUrl = filter_var(trim($sourceText), FILTER_VALIDATE_URL);
+    if ($sourceUrl && in_array(strtolower((string)parse_url($sourceUrl, PHP_URL_SCHEME)), ['http', 'https'], true)) {
+        $html .= '<div class="product-description-source"><i class="fa-solid fa-arrow-up-right-from-square"></i>'
+              . '<span>Product information source:</span> <a href="' . h($sourceUrl) . '" target="_blank" '
+              . 'rel="noopener noreferrer nofollow">Official Hikvision product page</a></div>';
+    }
+
+    return $html . '</div>';
+}
+
 /* ── STRUCTURED DATA (Schema.org) BUILDERS ── */
 /* Each returns a PHP array; includes/header.php JSON-encodes it safely. */
 
