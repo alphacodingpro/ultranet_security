@@ -34,6 +34,7 @@ include __DIR__ . '/includes/header.php';
             <th>Slug (SEO URL)</th>
             <th>Description</th>
             <th>Products</th>
+            <th>Homepage</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -52,6 +53,16 @@ include __DIR__ . '/includes/header.php';
               </a>
             </td>
             <td>
+              <form method="POST" action="<?= ADMIN_URL ?>/category-featured-toggle.php" style="display:inline">
+                <?php csrfField(); ?>
+                <input type="hidden" name="id" value="<?= $cat['id'] ?>">
+                <button type="submit" class="action-btn <?= !empty($cat['featured']) ? 'edit' : 'view' ?>"
+                        title="<?= !empty($cat['featured']) ? 'Remove from homepage' : 'Show on homepage' ?>" style="border:none">
+                  <i class="fa-<?= !empty($cat['featured']) ? 'solid' : 'regular' ?> fa-star"></i>
+                </button>
+              </form>
+            </td>
+            <td>
               <div class="action-btns">
                 <a href="<?= SITE_URL ?>/products.php?category=<?= h($cat['slug']) ?>" target="_blank" class="action-btn view" title="View"><i class="fa-solid fa-eye"></i></a>
                 <a href="<?= ADMIN_URL ?>/category-edit.php?id=<?= $cat['id'] ?>" class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
@@ -68,7 +79,7 @@ include __DIR__ . '/includes/header.php';
           </tr>
           <?php endforeach; ?>
           <?php else: ?>
-          <tr><td colspan="7" class="text-center py-4 text-muted">No categories yet. <a href="<?= ADMIN_URL ?>/category-add.php">Add first category →</a></td></tr>
+          <tr><td colspan="8" class="text-center py-4 text-muted">No categories yet. <a href="<?= ADMIN_URL ?>/category-add.php">Add first category →</a></td></tr>
           <?php endif; ?>
         </tbody>
       </table>
