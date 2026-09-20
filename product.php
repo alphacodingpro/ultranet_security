@@ -78,6 +78,31 @@ include __DIR__ . '/includes/header.php';
   .pg-video-frame{width:100%;aspect-ratio:16/9;border:none;display:block;background:#000}
 
   .prod-detail-badge-sale{position:absolute;top:16px;left:16px;background:var(--accent);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:20px;padding:5px 14px;border-radius:8px;z-index:5}
+  .product-description-sections{display:grid;gap:24px;color:var(--primary)}
+  .product-description-sections section{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:0 8px 24px rgba(10,22,40,.05)}
+  .product-description-sections h3{display:flex;align-items:center;gap:10px;margin:0 0 16px;font-size:21px;font-weight:700;color:var(--primary)}
+  .product-description-sections h3 i{color:var(--accent);font-size:18px}
+  .product-description-overview p{margin:0;color:var(--muted);font-size:16px;line-height:1.8}
+  .product-description-features ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;padding:0;margin:0;list-style:none}
+  .product-description-features li{display:flex;align-items:flex-start;gap:10px;line-height:1.55;color:var(--primary)}
+  .product-description-features li i{flex:0 0 22px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(220,38,38,.1);color:var(--accent);font-size:11px;margin-top:1px}
+  .product-spec-table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--border);border-radius:12px}
+  .product-spec-table th,.product-spec-table td{padding:13px 16px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;text-align:left}
+  .product-spec-table th{width:30%;min-width:210px;background:var(--light-bg);color:var(--primary);font-weight:650}
+  .product-spec-table td{color:var(--muted);word-break:break-word}
+  .product-spec-table tr:last-child th,.product-spec-table tr:last-child td{border-bottom:0}
+  .product-spec-table tr:nth-child(even) td{background:#fcfdff}
+  .product-description-source{display:flex;align-items:center;gap:8px;padding:14px 18px;background:var(--light-bg);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:14px}
+  .product-description-source i,.product-description-source a{color:var(--accent)}
+  .product-description-source a{font-weight:650;text-decoration:none}
+  .product-description-source a:hover{text-decoration:underline}
+  @media(max-width:767px){
+    .product-description-sections section{padding:18px}
+    .product-description-features ul{grid-template-columns:1fr}
+    .product-spec-table th{min-width:145px;width:42%}
+    .product-spec-table th,.product-spec-table td{padding:11px 12px;font-size:14px}
+    .product-description-source{align-items:flex-start;flex-wrap:wrap}
+  }
 </style>
 
 <!-- BREADCRUMB -->
@@ -230,7 +255,7 @@ include __DIR__ . '/includes/header.php';
   <?php if (!empty($product['description'])): ?>
   <div class="prod-description mt-5">
     <h2 class="section-title" style="font-size:28px">PRODUCT <span style="color:var(--accent)">DESCRIPTION</span></h2>
-    <div class="prod-desc-content"><?= nl2br(h($product['description'])) ?></div>
+    <div class="prod-desc-content"><?= formatProductDescriptionHtml($product['description']) ?></div>
   </div>
   <?php endif; ?>
 
