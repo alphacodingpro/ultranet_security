@@ -10,7 +10,7 @@ $db = getDB();
 $filterCat    = (int)($_GET['cat'] ?? 0);
 $filterStatus = $_GET['status'] ?? '';
 $filterSearch = trim($_GET['q'] ?? '');
-$currentPage  = max(1, (int)($_GET['page'] ?? 1));
+$productPage  = max(1, (int)($_GET['page'] ?? 1));
 $perPage      = 25;
 
 $where  = ['1=1'];
@@ -39,8 +39,8 @@ $countSt = $db->prepare($countSql);
 $countSt->execute($params);
 $totalProducts = (int)$countSt->fetchColumn();
 $totalPages = max(1, (int)ceil($totalProducts / $perPage));
-$currentPage = min($currentPage, $totalPages);
-$offset = ($currentPage - 1) * $perPage;
+$productPage = min($productPage, $totalPages);
+$offset = ($productPage - 1) * $perPage;
 
 $sql = 'SELECT p.*, c.name AS category_name FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
@@ -62,8 +62,8 @@ $pageQuery = array_filter([
 $pageUrl = static function (int $page) use ($pageQuery): string {
     return ADMIN_URL . '/products.php?' . http_build_query(array_merge($pageQuery, ['page' => $page]));
 };
-$windowStart = max(1, $currentPage - 2);
-$windowEnd = min($totalPages, $currentPage + 2);
+$windowStart = max(1, $productPage - 2);
+$windowEnd = min($totalPages, $productPage + 2);
 
 $adminPageTitle = 'All Products';
 include __DIR__ . '/includes/header.php';
@@ -127,23 +127,23 @@ include __DIR__ . '/includes/header.php';
 <div class="admin-card mb-3">
   <div class="admin-card-body py-3 d-flex align-items-center justify-content-between gap-3 flex-wrap">
     <div class="small text-muted">
-      <strong class="text-dark">Page <?= $currentPage ?> of <?= $totalPages ?></strong>
+      <strong class="text-dark">Page <?= $productPage ?> of <?= $totalPages ?></strong>
       &nbsp;·&nbsp; Showing <?= $offset + 1 ?>–<?= min($offset + $perPage, $totalProducts) ?> of <?= $totalProducts ?> products
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap" aria-label="Product pages">
-      <?php if ($currentPage > 1): ?>
-      <a class="btn-admin-outline btn-sm" href="<?= h($pageUrl($currentPage - 1)) ?>">
+      <?php if ($productPage > 1): ?>
+      <a class="btn-admin-outline btn-sm" href="<?= h($pageUrl($productPage - 1)) ?>">
         <i class="fa-solid fa-chevron-left me-1"></i>Previous
       </a>
       <?php endif; ?>
 
       <?php for ($page = $windowStart; $page <= $windowEnd; $page++): ?>
-      <a class="<?= $page === $currentPage ? 'btn-admin-primary' : 'btn-admin-outline' ?> btn-sm"
-         href="<?= h($pageUrl($page)) ?>" <?= $page === $currentPage ? 'aria-current="page"' : '' ?>><?= $page ?></a>
+      <a class="<?= $page === $productPage ? 'btn-admin-primary' : 'btn-admin-outline' ?> btn-sm"
+         href="<?= h($pageUrl($page)) ?>" <?= $page === $productPage ? 'aria-current="page"' : '' ?>><?= $page ?></a>
       <?php endfor; ?>
 
-      <?php if ($currentPage < $totalPages): ?>
-      <a class="btn-admin-outline btn-sm" href="<?= h($pageUrl($currentPage + 1)) ?>">
+      <?php if ($productPage < $totalPages): ?>
+      <a class="btn-admin-outline btn-sm" href="<?= h($pageUrl($productPage + 1)) ?>">
         Next<i class="fa-solid fa-chevron-right ms-1"></i>
       </a>
       <?php endif; ?>
@@ -244,8 +244,8 @@ include __DIR__ . '/includes/header.php';
     Showing <?= $totalProducts ? $offset + 1 : 0 ?>–<?= min($offset + $perPage, $totalProducts) ?> of <?= $totalProducts ?> products
   </div>
   <nav class="admin-pagination" aria-label="Product pages">
-    <a class="admin-page-link <?= $currentPage <= 1 ? 'disabled' : '' ?>"
-       href="<?= $currentPage > 1 ? h($pageUrl($currentPage - 1)) : '#' ?>" aria-label="Previous page">
+    <a class="admin-page-link <?= $productPage <= 1 ? 'disabled' : '' ?>"
+       href="<?= $productPage > 1 ? h($pageUrl($productPage - 1)) : '#' ?>" aria-label="Previous page">
       <i class="fa-solid fa-chevron-left"></i>
     </a>
 
@@ -255,8 +255,8 @@ include __DIR__ . '/includes/header.php';
     <?php endif; ?>
 
     <?php for ($page = $windowStart; $page <= $windowEnd; $page++): ?>
-      <a class="admin-page-link <?= $page === $currentPage ? 'active' : '' ?>"
-         href="<?= h($pageUrl($page)) ?>" <?= $page === $currentPage ? 'aria-current="page"' : '' ?>><?= $page ?></a>
+      <a class="admin-page-link <?= $page === $productPage ? 'active' : '' ?>"
+         href="<?= h($pageUrl($page)) ?>" <?= $page === $productPage ? 'aria-current="page"' : '' ?>><?= $page ?></a>
     <?php endfor; ?>
 
     <?php if ($windowEnd < $totalPages): ?>
@@ -264,8 +264,8 @@ include __DIR__ . '/includes/header.php';
       <a class="admin-page-link" href="<?= h($pageUrl($totalPages)) ?>"><?= $totalPages ?></a>
     <?php endif; ?>
 
-    <a class="admin-page-link <?= $currentPage >= $totalPages ? 'disabled' : '' ?>"
-       href="<?= $currentPage < $totalPages ? h($pageUrl($currentPage + 1)) : '#' ?>" aria-label="Next page">
+    <a class="admin-page-link <?= $productPage >= $totalPages ? 'disabled' : '' ?>"
+       href="<?= $productPage < $totalPages ? h($pageUrl($productPage + 1)) : '#' ?>" aria-label="Next page">
       <i class="fa-solid fa-chevron-right"></i>
     </a>
   </nav>
