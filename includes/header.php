@@ -159,7 +159,7 @@ $searchQuery  = h($_GET['q'] ?? '');
           <ul class="dropdown-menu" aria-labelledby="prodDrop">
             <li><a class="dropdown-item" href="<?= SITE_URL ?>/products.php">All Products</a></li>
             <li><hr class="dropdown-divider"></li>
-            <?php foreach ($allCategories as $cat): ?>
+            <?php foreach (getRootCategories() as $cat): ?>
               <li>
                 <a class="dropdown-item" href="<?= SITE_URL ?>/products.php?category=<?= h($cat['slug']) ?>">
                   <i class="<?= h($cat['icon']) ?> me-2 text-danger"></i><?= h($cat['name']) ?>
