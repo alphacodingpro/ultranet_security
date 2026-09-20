@@ -13,13 +13,17 @@ USE `ultranet_security`;
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `categories` (
   `id`          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `parent_id`   INT UNSIGNED DEFAULT NULL,
   `name`        VARCHAR(120)  NOT NULL,
   `slug`        VARCHAR(140)  NOT NULL UNIQUE,
   `description` VARCHAR(500)  DEFAULT NULL,
   `icon`        VARCHAR(60)   DEFAULT 'fa-solid fa-camera',
+  `brand`       VARCHAR(80)   DEFAULT NULL,
   `featured`    TINYINT(1)    NOT NULL DEFAULT 0,
   `created_at`  DATETIME      DEFAULT CURRENT_TIMESTAMP,
-  `updated_at`  DATETIME      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at`  DATETIME      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_category_parent` (`parent_id`),
+  INDEX `idx_category_brand` (`brand`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ------------------------------------------------------------
