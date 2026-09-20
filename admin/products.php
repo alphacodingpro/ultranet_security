@@ -62,6 +62,8 @@ $pageQuery = array_filter([
 $pageUrl = static function (int $page) use ($pageQuery): string {
     return ADMIN_URL . '/products.php?' . http_build_query(array_merge($pageQuery, ['page' => $page]));
 };
+$windowStart = max(1, $currentPage - 2);
+$windowEnd = min($totalPages, $currentPage + 2);
 
 $adminPageTitle = 'All Products';
 include __DIR__ . '/includes/header.php';
@@ -119,6 +121,36 @@ include __DIR__ . '/includes/header.php';
     </form>
   </div>
 </div>
+
+<?php if ($totalPages > 1): ?>
+<!-- TOP PAGINATION: intentionally uses existing admin button styles so it remains visible even with cached CSS -->
+<div class="admin-card mb-3">
+  <div class="admin-card-body py-3 d-flex align-items-center justify-content-between gap-3 flex-wrap">
+    <div class="small text-muted">
+      <strong class="text-dark">Page <?= $currentPage ?> of <?= $totalPages ?></strong>
+      &nbsp;·&nbsp; Showing <?= $offset + 1 ?>–<?= min($offset + $perPage, $totalProducts) ?> of <?= $totalProducts ?> products
+    </div>
+    <div class="d-flex align-items-center gap-2 flex-wrap" aria-label="Product pages">
+      <?php if ($currentPage > 1): ?>
+      <a class="btn-admin-outline btn-sm" href="<?= h($pageUrl($currentPage - 1)) ?>">
+        <i class="fa-solid fa-chevron-left me-1"></i>Previous
+      </a>
+      <?php endif; ?>
+
+      <?php for ($page = $windowStart; $page <= $windowEnd; $page++): ?>
+      <a class="<?= $page === $currentPage ? 'btn-admin-primary' : 'btn-admin-outline' ?> btn-sm"
+         href="<?= h($pageUrl($page)) ?>" <?= $page === $currentPage ? 'aria-current="page"' : '' ?>><?= $page ?></a>
+      <?php endfor; ?>
+
+      <?php if ($currentPage < $totalPages): ?>
+      <a class="btn-admin-outline btn-sm" href="<?= h($pageUrl($currentPage + 1)) ?>">
+        Next<i class="fa-solid fa-chevron-right ms-1"></i>
+      </a>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 
 <!-- TABLE -->
 <div class="admin-card">
@@ -207,10 +239,6 @@ include __DIR__ . '/includes/header.php';
 </div>
 
 <?php if ($totalPages > 1): ?>
-<?php
-$windowStart = max(1, $currentPage - 2);
-$windowEnd = min($totalPages, $currentPage + 2);
-?>
 <div class="admin-pagination-wrap">
   <div class="admin-pagination-info">
     Showing <?= $totalProducts ? $offset + 1 : 0 ?>–<?= min($offset + $perPage, $totalProducts) ?> of <?= $totalProducts ?> products
