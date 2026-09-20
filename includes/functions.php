@@ -33,6 +33,21 @@ function getAllCategories(): array
     return $db->query('SELECT * FROM categories ORDER BY name ASC')->fetchAll();
 }
 
+function getFeaturedCategories(): array
+{
+    $db = getDB();
+
+    try {
+        return $db->query('SELECT * FROM categories WHERE featured = 1 ORDER BY name ASC')->fetchAll();
+    } catch (PDOException $e) {
+        // Keep the homepage working until the featured-category migration is applied.
+        $defaultSlugs = ['accessories', 'cctv-cameras', 'dvr', 'nvr'];
+        return array_values(array_filter(getAllCategories(), static function (array $category) use ($defaultSlugs): bool {
+            return in_array($category['slug'], $defaultSlugs, true);
+        }));
+    }
+}
+
 function getCategoryBySlug(string $slug): ?array
 {
     $db  = getDB();
