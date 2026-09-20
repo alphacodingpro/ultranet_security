@@ -12,6 +12,7 @@ if (!$cat) { setFlash('error','Category not found.'); header('Location: '.ADMIN_
 
 $errors = [];
 $input  = $cat;
+$parentCategories = array_values(array_filter(getRootCategories(), static fn(array $item): bool => (int)$item['id'] !== $id));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrf();
@@ -20,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'slug'        => slugify(trim($_POST['slug'] ?? '')),
         'description' => trim($_POST['description'] ?? ''),
         'icon'        => trim($_POST['icon'] ?? 'fa-solid fa-camera'),
+        'parent_id'   => (int)($_POST['parent_id'] ?? 0),
+        'brand'       => trim($_POST['brand'] ?? ''),
         'featured'    => isset($_POST['featured']) ? 1 : 0,
     ];
 
@@ -32,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $st->execute([$input['slug'], $id]);
         if ($st->fetch()) $input['slug'] .= '-' . time();
 
-        $db->prepare('UPDATE categories SET name=?,slug=?,description=?,icon=?,featured=? WHERE id=?')
-           ->execute([$input['name'], $input['slug'], $input['description'] ?: null, $input['icon'], $input['featured'], $id]);
+        $db->prepare('UPDATE categories SET name=?,slug=?,description=?,icon=?,parent_id=?,brand=?,featured=? WHERE id=?')
+           ->execute([$input['name'], $input['slug'], $input['description'] ?: null, $input['icon'], $input['parent_id'] ?: null, $input['brand'] ?: null, $input['featured'], $id]);
         setFlash('success', 'Category updated!');
         header('Location: ' . ADMIN_URL . '/categories.php');
         exit;
@@ -80,6 +83,21 @@ include __DIR__ . '/includes/header.php';
                      oninput="document.getElementById('iconPreview').className=this.value">
             </div>
             <small class="text-muted">Browse at <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com/icons</a></small>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-600">Parent Category</label>
+              <select name="parent_id" class="form-select">
+                <option value="0">None — Main Category</option>
+                <?php foreach ($parentCategories as $parent): ?>
+                <option value="<?= $parent['id'] ?>" <?= (int)($input['parent_id'] ?? 0) === (int)$parent['id'] ? 'selected' : '' ?>><?= h($parent['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Brand</label>
+              <input type="text" name="brand" class="form-control" value="<?= h($input['brand'] ?? '') ?>" placeholder="e.g. Hikvision">
+            </div>
           </div>
           <div class="form-check form-switch mb-4">
             <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" <?= !empty($input['featured']) ? 'checked' : '' ?>>
