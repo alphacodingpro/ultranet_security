@@ -10,6 +10,8 @@ $db = getDB();
 $filterCat    = (int)($_GET['cat'] ?? 0);
 $filterStatus = $_GET['status'] ?? '';
 $filterSearch = trim($_GET['q'] ?? '');
+$currentPage  = max(1, (int)($_GET['page'] ?? 1));
+$perPage      = 25;
 
 $where  = ['1=1'];
 $params = [];
@@ -23,16 +25,28 @@ if ($filterStatus) {
     $params[] = $filterStatus;
 }
 if ($filterSearch) {
-    $where[]  = '(p.name LIKE ? OR p.brand LIKE ?)';
+    $where[]  = '(p.name LIKE ? OR p.brand LIKE ? OR p.sku LIKE ?)';
     $kw       = '%' . $filterSearch . '%';
+    $params[] = $kw;
     $params[] = $kw;
     $params[] = $kw;
 }
 
+$whereSql = implode(' AND ', $where);
+
+$countSql = 'SELECT COUNT(*) FROM products p WHERE ' . $whereSql;
+$countSt = $db->prepare($countSql);
+$countSt->execute($params);
+$totalProducts = (int)$countSt->fetchColumn();
+$totalPages = max(1, (int)ceil($totalProducts / $perPage));
+$currentPage = min($currentPage, $totalPages);
+$offset = ($currentPage - 1) * $perPage;
+
 $sql = 'SELECT p.*, c.name AS category_name FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE ' . implode(' AND ', $where) . '
-        ORDER BY p.id DESC';
+        WHERE ' . $whereSql . '
+        ORDER BY p.id DESC
+        LIMIT ' . $perPage . ' OFFSET ' . $offset;
 
 $st = $db->prepare($sql);
 $st->execute($params);
@@ -40,12 +54,21 @@ $products   = $st->fetchAll();
 $categories = getAllCategories();
 $brands     = getAllBrands();
 
+$pageQuery = array_filter([
+    'q' => $filterSearch,
+    'cat' => $filterCat ?: null,
+    'status' => $filterStatus,
+], static fn($value) => $value !== '' && $value !== null);
+$pageUrl = static function (int $page) use ($pageQuery): string {
+    return ADMIN_URL . '/products.php?' . http_build_query(array_merge($pageQuery, ['page' => $page]));
+};
+
 $adminPageTitle = 'All Products';
 include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="admin-page-header">
-  <h1 class="admin-page-title"><i class="fa-solid fa-camera me-2"></i>All Products <span class="badge bg-secondary"><?= count($products) ?></span></h1>
+  <h1 class="admin-page-title"><i class="fa-solid fa-camera me-2"></i>All Products <span class="badge bg-secondary"><?= $totalProducts ?></span></h1>
   <div class="d-flex gap-2">
     <a href="<?= ADMIN_URL ?>/product-import.php" class="btn-admin-outline"><i class="fa-solid fa-file-csv me-1"></i>Bulk Upload</a>
     <a href="<?= ADMIN_URL ?>/product-add.php" class="btn-admin-primary"><i class="fa-solid fa-plus me-1"></i>Add Product</a>
@@ -182,5 +205,43 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 </div>
+
+<?php if ($totalPages > 1): ?>
+<?php
+$windowStart = max(1, $currentPage - 2);
+$windowEnd = min($totalPages, $currentPage + 2);
+?>
+<div class="admin-pagination-wrap">
+  <div class="admin-pagination-info">
+    Showing <?= $totalProducts ? $offset + 1 : 0 ?>–<?= min($offset + $perPage, $totalProducts) ?> of <?= $totalProducts ?> products
+  </div>
+  <nav class="admin-pagination" aria-label="Product pages">
+    <a class="admin-page-link <?= $currentPage <= 1 ? 'disabled' : '' ?>"
+       href="<?= $currentPage > 1 ? h($pageUrl($currentPage - 1)) : '#' ?>" aria-label="Previous page">
+      <i class="fa-solid fa-chevron-left"></i>
+    </a>
+
+    <?php if ($windowStart > 1): ?>
+      <a class="admin-page-link" href="<?= h($pageUrl(1)) ?>">1</a>
+      <?php if ($windowStart > 2): ?><span class="admin-page-dots">…</span><?php endif; ?>
+    <?php endif; ?>
+
+    <?php for ($page = $windowStart; $page <= $windowEnd; $page++): ?>
+      <a class="admin-page-link <?= $page === $currentPage ? 'active' : '' ?>"
+         href="<?= h($pageUrl($page)) ?>" <?= $page === $currentPage ? 'aria-current="page"' : '' ?>><?= $page ?></a>
+    <?php endfor; ?>
+
+    <?php if ($windowEnd < $totalPages): ?>
+      <?php if ($windowEnd < $totalPages - 1): ?><span class="admin-page-dots">…</span><?php endif; ?>
+      <a class="admin-page-link" href="<?= h($pageUrl($totalPages)) ?>"><?= $totalPages ?></a>
+    <?php endif; ?>
+
+    <a class="admin-page-link <?= $currentPage >= $totalPages ? 'disabled' : '' ?>"
+       href="<?= $currentPage < $totalPages ? h($pageUrl($currentPage + 1)) : '#' ?>" aria-label="Next page">
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </nav>
+</div>
+<?php endif; ?>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
