@@ -45,7 +45,7 @@
         <div class="footer-heading">Products</div>
         <ul class="footer-links">
           <?php
-          $footerCats = getAllCategories();
+          $footerCats = getFeaturedCategories();
           foreach ($footerCats as $fc): ?>
             <li>
               <a href="<?= SITE_URL ?>/products.php?category=<?= h($fc['slug']) ?>">
