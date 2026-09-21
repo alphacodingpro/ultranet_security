@@ -1,0 +1,39 @@
+name: Admin product filter checks
+on:
+  push:
+    branches: [main, codex/admin-product-filters]
+permissions:
+  contents: read
+jobs:
+  filters:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        database: ['mysql:8.0', 'mariadb:10.11']
+    services:
+      db:
+        image: ${{ matrix.database }}
+        env:
+          MYSQL_ROOT_PASSWORD: test-only
+          MYSQL_DATABASE: filter_test
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax
+        run: |
+          php -l includes/admin-product-filters.php
+          php -l admin/products.php
+          php -l admin/includes/product-filter-form.php
+          php -l tests/admin-product-filters-test.php
+      - name: Real database filter regressions
+        env:
+          FILTER_TEST_DSN: mysql:host=127.0.0.1;port=${{ job.services.db.ports[3306] }};dbname=filter_test;charset=utf8mb4
+          FILTER_TEST_USER: root
+          FILTER_TEST_PASSWORD: test-only
+        run: php tests/admin-product-filters-test.php

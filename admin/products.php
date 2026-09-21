@@ -3,46 +3,34 @@ require_once dirname(__DIR__) . '/config/config.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
 
 requireAdminLogin();
+require_once dirname(__DIR__) . '/includes/admin-product-filters.php';
 
 $db = getDB();
 
-// Filters
-$filterCat    = (int)($_GET['cat'] ?? 0);
-$filterStatus = $_GET['status'] ?? '';
-$filterSearch = trim($_GET['q'] ?? '');
-$productPage  = max(1, (int)($_GET['page'] ?? 1));
-$perPage      = 25;
-
-$where  = ['1=1'];
-$params = [];
-
-if ($filterCat) {
-    $where[]  = 'p.category_id = ?';
-    $params[] = $filterCat;
-}
-if ($filterStatus) {
-    $where[]  = 'p.status = ?';
-    $params[] = $filterStatus;
-}
-if ($filterSearch) {
-    $where[]  = '(p.name LIKE ? OR p.brand LIKE ? OR p.sku LIKE ?)';
-    $kw       = '%' . $filterSearch . '%';
-    $params[] = $kw;
-    $params[] = $kw;
-    $params[] = $kw;
-}
-
-$whereSql = implode(' AND ', $where);
-
-$countSql = 'SELECT COUNT(*) FROM products p WHERE ' . $whereSql;
+// All filter state is validated once and reused for counts, rows and page links.
+$filters = adminProductFilterValues($_GET);
+$filterOptions = adminProductFilterOptions();
+$compiled = adminProductFiltersSql($filters);
+$filterCat = $filters['cat'];
+$filterStatus = $filters['status'];
+$filterSearch = $filters['q'];
+$productPage = max(1, (int)(is_scalar($_GET['page'] ?? 1) ? ($_GET['page'] ?? 1) : 1));
+$perPage = 25;
+$whereSql = $compiled['where'];
+$params = $compiled['params'];
+$imageCountSql = adminProductImageCountSql();
+$youtubeSql = adminProductYoutubeSql();
+$countSql = 'SELECT COUNT(*) AS total, COALESCE(SUM('.$youtubeSql.'),0) AS with_youtube,
+    COALESCE(SUM('.$imageCountSql.'=0),0) AS without_images FROM products p WHERE '.$whereSql;
 $countSt = $db->prepare($countSql);
 $countSt->execute($params);
-$totalProducts = (int)$countSt->fetchColumn();
+$filterSummary = $countSt->fetch();
+$totalProducts = (int)$filterSummary['total'];
 $totalPages = max(1, (int)ceil($totalProducts / $perPage));
 $productPage = min($productPage, $totalPages);
 $offset = ($productPage - 1) * $perPage;
 
-$sql = 'SELECT p.*, c.name AS category_name FROM products p
+$sql = 'SELECT p.*, c.name AS category_name, '.$imageCountSql.' AS image_count, '.$youtubeSql.' AS has_youtube FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         WHERE ' . $whereSql . '
         ORDER BY p.id DESC
@@ -54,11 +42,7 @@ $products   = $st->fetchAll();
 $categories = getAllCategories();
 $brands     = getAllBrands();
 
-$pageQuery = array_filter([
-    'q' => $filterSearch,
-    'cat' => $filterCat ?: null,
-    'status' => $filterStatus,
-], static fn($value) => $value !== '' && $value !== null);
+$pageQuery = array_filter($filters, static fn($value) => $value !== '' && $value !== [] && $value !== 0);
 $pageUrl = static function (int $page) use ($pageQuery): string {
     return ADMIN_URL . '/products.php?' . http_build_query(array_merge($pageQuery, ['page' => $page]));
 };
@@ -92,35 +76,7 @@ include __DIR__ . '/includes/header.php';
   </div>
 </div>
 
-<!-- FILTERS -->
-<div class="admin-card mb-4">
-  <div class="admin-card-body">
-    <form method="GET" class="row g-2 align-items-end">
-      <div class="col-12 col-md-4">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by name or brand…" value="<?= h($filterSearch) ?>">
-      </div>
-      <div class="col-6 col-md-3">
-        <select name="cat" class="form-select form-select-sm">
-          <option value="">All Categories</option>
-          <?php foreach ($categories as $cat): ?>
-          <option value="<?= $cat['id'] ?>" <?= $filterCat == $cat['id'] ? 'selected' : '' ?>><?= h($cat['name']) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-      <div class="col-6 col-md-2">
-        <select name="status" class="form-select form-select-sm">
-          <option value="">All Status</option>
-          <option value="active"   <?= $filterStatus==='active'   ? 'selected':'' ?>>Active</option>
-          <option value="inactive" <?= $filterStatus==='inactive' ? 'selected':'' ?>>Inactive</option>
-        </select>
-      </div>
-      <div class="col-12 col-md-3 d-flex gap-2">
-        <button type="submit" class="btn-admin-primary btn-sm flex-grow-1"><i class="fa-solid fa-filter me-1"></i>Filter</button>
-        <a href="<?= ADMIN_URL ?>/products.php" class="btn-admin-outline btn-sm">Clear</a>
-      </div>
-    </form>
-  </div>
-</div>
+<?php include __DIR__ . '/includes/product-filter-form.php'; ?>
 
 <?php if ($totalPages > 1): ?>
 <!-- TOP PAGINATION: intentionally uses existing admin button styles so it remains visible even with cached CSS -->
@@ -165,6 +121,8 @@ include __DIR__ . '/includes/header.php';
             <th>Category</th>
             <th>Calc Type</th>
             <th>Price</th>
+            <th>Images</th>
+            <th>YouTube</th>
             <th>Stock</th>
             <th>Status</th>
             <th>Featured</th>
@@ -198,6 +156,8 @@ include __DIR__ . '/includes/header.php';
               <strong><?= formatPrice($p['price']) ?></strong>
               <?php if ($p['old_price']): ?><br><small class="text-muted"><del><?= formatPrice($p['old_price']) ?></del></small><?php endif; ?>
             </td>
+            <td><span class="badge bg-<?= (int)$p['image_count'] === 0 ? 'warning text-dark' : 'secondary' ?>"><?= (int)$p['image_count'] ?></span></td>
+            <td><span class="small <?= $p['has_youtube'] ? 'text-success' : 'text-muted' ?>"><?= $p['has_youtube'] ? 'Added' : 'Not added' ?></span></td>
             <td>
               <?php
               $sClass = ['in_stock'=>'status-active','out_of_stock'=>'status-inactive','on_order'=>'status-order'];
@@ -230,7 +190,7 @@ include __DIR__ . '/includes/header.php';
           </tr>
           <?php endforeach; ?>
           <?php else: ?>
-          <tr><td colspan="10" class="text-center py-4 text-muted">No products found. <a href="<?= ADMIN_URL ?>/product-add.php">Add your first product →</a></td></tr>
+          <tr><td colspan="12" class="text-center py-4 text-muted">No products match these filters. <a href="<?= ADMIN_URL ?>/products.php">Clear filters</a></td></tr>
           <?php endif; ?>
         </tbody>
       </table>
