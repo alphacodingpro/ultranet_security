@@ -84,7 +84,9 @@ if (php_sapi_name() !== 'cli' && !empty($_SERVER['HTTP_HOST'])) {
     $preferredHost = parse_url(SITE_URL, PHP_URL_HOST);
     $currentHost   = $_SERVER['HTTP_HOST'];
     $isLocalDev    = stripos($currentHost, 'localhost') !== false || stripos($currentHost, '127.0.0.1') !== false;
-    if (!$isLocalDev && $preferredHost && strcasecmp($currentHost, $preferredHost) !== 0) {
+    $preferredScheme = parse_url(SITE_URL, PHP_URL_SCHEME) ?: 'https';
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (int)($_SERVER['SERVER_PORT'] ?? 0) === 443 || strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    if (!$isLocalDev && $preferredHost && (strcasecmp($currentHost, $preferredHost) !== 0 || ($preferredScheme === 'https' && !$isHttps))) {
         $scheme = parse_url(SITE_URL, PHP_URL_SCHEME) ?: 'https';
         header('Location: ' . $scheme . '://' . $preferredHost . ($_SERVER['REQUEST_URI'] ?? '/'), true, in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET','HEAD'], true) ? 301 : 308);
         exit;

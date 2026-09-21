@@ -66,13 +66,13 @@ if($categoryObj&&!$showProducts){
 }
 $filtered=$search!==''||$direct||($brand!==''&&(!$categoryObj||!$hasHierarchy))||($seriesObj&&empty($seriesObj['brand'])&&$brand!=='');
 $metaRobots=($categoryEmpty||$filtered||($showProducts&&$totalProducts===0))?'noindex, follow':'index, follow'; $extraSchema=[schemaBreadcrumb($trail)];
-if($seriesObj){$pageTitle=seoTitle($seriesObj['name'].' Karachi','UltraNet Security',60);$metaDesc=seoDescription('Browse '.$seriesObj['name'].' products by '.$brand.' in Karachi.',155);}
+if($seriesObj){$pageTitle=seoTitle($seriesObj['name'].' Karachi','UltraNet Security',60);$metaDesc=seoDescription('Browse '.$seriesObj['name'].' products'.($brand!==''?' by '.$brand:'').' in Karachi.',155);}
 elseif($categoryObj&&$brand!==''){$pageTitle=seoTitle($brand.' '.$categoryObj['name'],'UltraNet Security',60);$metaDesc=seoDescription('Choose a '.$brand.' product series from UltraNet Security Karachi.',155);}
 elseif($categoryObj){$pageTitle=seoTitle($categoryObj['name'].' Karachi','UltraNet Security',60);$metaDesc=seoDescription('Choose a brand and browse '.$categoryObj['name'].' from UltraNet Security Karachi.',155);}
 elseif($search!==''){$pageTitle=seoTitle('Search: '.$search,'UltraNet Security',60);$metaDesc=seoDescription('Search results for '.$search.' on UltraNet Security Karachi.',155);}
 else{$pageTitle='CCTV Products Karachi | UltraNet Security';$metaDesc='Browse CCTV cameras, NVR, DVR and accessories by category, brand and product series.';}
 $canonicalSlug=catalogPath($queryBase,$currentPage);
-if($currentPage>1){$pageTitle=seoTitle(($seriesObj['name']??$categoryObj['name']??'Products').' — Page '.$currentPage,'UltraNet Security',70);$metaDesc=seoDescription($metaDesc.' Page '.$currentPage.'.',170);}
+if($currentPage>1){$pageTitle=seoTitle(($seriesObj['name']??$categoryObj['name']??'Products'),'Page '.$currentPage.' | UltraNet Security',70);$metaDesc=seoDescription('Page '.$currentPage.'. '.$metaDesc,170);}
 include __DIR__.'/includes/header.php';
 ?>
 <section class="page-hero"><div class="container">

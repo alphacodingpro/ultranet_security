@@ -42,11 +42,14 @@ def audit(url):
     if p.schema_errors:issues.append('Invalid JSON-LD')
     return {'url':url,'status':status,'final_url':final,'title':p.title,'description':p.description,'canonical':p.canonical,'robots':p.robots,'issues':issues,'missing_alt':sum(i['alt'] is None for i in p.images),'images':list({urllib.parse.urljoin(url,i['src']) for i in p.images if i['src']})}
 report={'checks':{},'pages':[]}
-for path in ['/robots.txt','/sitemap.xml','/packages/','/index.php','/seo-audit-nonexistent-page-404']:
+for path in ['/robots.txt','/sitemap.xml','/sitemap.php','/packages/','/index.php','/seo-audit-nonexistent-page-404']:
     status,url,headers,body=fetch(BASE+path)
     report['checks'][path]={'status':status,'final_url':url,'content_type':headers.get('Content-Type','')}
     if path=='/robots.txt':report['checks'][path]['body']=body[:2000]
     if path=='/sitemap.xml':xml=body
+    if path in ['/sitemap.xml','/sitemap.php']:
+        try:report['checks'][path]['url_count']=len(ET.fromstring(body))
+        except ET.ParseError:report['checks'][path]['xml_valid']=False
 for url in ['http://ultranetsecurity.com/','https://www.ultranetsecurity.com/']:
     status,final,headers,body=fetch(url);report['checks'][url]={'status':status,'final_url':final}
 try:urls=[x.text for x in ET.fromstring(xml).findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url/{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]

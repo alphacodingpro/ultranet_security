@@ -30,7 +30,7 @@ $pageTitle    = $product['meta_title']
     ? seoTitle($product['meta_title'], 'UltraNet Security', 60)
     : seoTitle($product['name'], 'UltraNet Security Karachi', 60);
 $metaDesc     = seoDescription(
-    $product['meta_description'] ?: ($product['short_desc'] ?: ('Buy ' . $product['name'] . ' in Karachi. Ask UltraNet Security about availability, pricing and installation.')),
+    $product['meta_description'] ?: ($product['name'].'. '.($product['short_desc'] ?: 'Available from UltraNet Security in Karachi. Ask about pricing and installation.')),
     155
 );
 $metaKeywords = implode(', ', array_filter([$product['brand'], $product['name'], 'Karachi', 'CCTV', 'security camera']));

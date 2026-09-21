@@ -1000,6 +1000,7 @@ function schemaProduct(array $product): array
             "itemCondition" => "https://schema.org/NewCondition",
         ],
     ];
+    if (empty($product['image']) || basename($product['image']) === 'no-image.jpg') unset($data['image']);
     // Imported zero prices mean a quotation is needed, not a free product.
     if ((float)$product['price'] <= 0) unset($data['offers']);
     if (!empty($product['brand'])) {
