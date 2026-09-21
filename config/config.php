@@ -85,8 +85,8 @@ if (php_sapi_name() !== 'cli' && !empty($_SERVER['HTTP_HOST'])) {
     $currentHost   = $_SERVER['HTTP_HOST'];
     $isLocalDev    = stripos($currentHost, 'localhost') !== false || stripos($currentHost, '127.0.0.1') !== false;
     if (!$isLocalDev && $preferredHost && strcasecmp($currentHost, $preferredHost) !== 0) {
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        header('Location: ' . $scheme . '://' . $preferredHost . ($_SERVER['REQUEST_URI'] ?? '/'), true, 301);
+        $scheme = parse_url(SITE_URL, PHP_URL_SCHEME) ?: 'https';
+        header('Location: ' . $scheme . '://' . $preferredHost . ($_SERVER['REQUEST_URI'] ?? '/'), true, in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET','HEAD'], true) ? 301 : 308);
         exit;
     }
 }

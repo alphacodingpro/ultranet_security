@@ -4,6 +4,7 @@
 // =============================================
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/catalog-seo.php';
 
 /* ── STRING / SEO ── */
 
@@ -50,7 +51,8 @@ function getChildCategories(int $parentId, string $brand = ''): array
         $sql = 'SELECT * FROM categories WHERE parent_id = ?';
         $params = [$parentId];
         if ($brand !== '') {
-            $sql .= ' AND brand = ?';
+            $sql .= ' AND (brand = ? OR ((brand IS NULL OR brand = \'\') AND EXISTS (SELECT 1 FROM products p WHERE p.category_id = categories.id AND p.status = \'active\' AND p.brand = ?)))';
+            $params[] = $brand;
             $params[] = $brand;
         }
         $sql .= ' ORDER BY name ASC';
@@ -70,10 +72,10 @@ function getCategoryBrands(int $parentId): array
             'SELECT DISTINCT COALESCE(NULLIF(c.brand, ""), p.brand) AS brand
              FROM categories c
              LEFT JOIN products p ON p.category_id = c.id AND p.status = "active"
-             WHERE c.parent_id = ? AND COALESCE(NULLIF(c.brand, ""), p.brand) IS NOT NULL
+             WHERE (c.parent_id = ? OR c.id = ?) AND COALESCE(NULLIF(c.brand, ""), p.brand) IS NOT NULL AND COALESCE(NULLIF(c.brand, ""), p.brand) <> ""
              ORDER BY brand ASC'
         );
-        $st->execute([$parentId]);
+        $st->execute([$parentId, $parentId]);
         return $st->fetchAll(PDO::FETCH_COLUMN);
     } catch (PDOException $e) {
         return [];
@@ -998,6 +1000,8 @@ function schemaProduct(array $product): array
             "itemCondition" => "https://schema.org/NewCondition",
         ],
     ];
+    // Imported zero prices mean a quotation is needed, not a free product.
+    if ((float)$product['price'] <= 0) unset($data['offers']);
     if (!empty($product['brand'])) {
         $data['brand'] = ["@type" => "Brand", "name" => $product['brand']];
     }

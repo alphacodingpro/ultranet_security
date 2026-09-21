@@ -2,8 +2,16 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$search   = trim($_GET['q'] ?? '');
-$products = $search ? getProducts(['search' => $search]) : [];
+// Use the same bounded, paginated search everywhere.
+$search = queryText('q');
+if ($search !== '') {
+    $page = queryText('page');
+    $target = catalogPath(['q' => $search]);
+    if ($page !== '') $target .= '&page=' . rawurlencode($page);
+    header('Location: ' . SITE_URL . $target, true, 301);
+    exit;
+}
+$products = [];
 
 $pageTitle    = $search ? seoTitle('Search: ' . $search, 'UltraNet Security', 60) : 'Search Products | UltraNet Security';
 $metaDesc     = $search

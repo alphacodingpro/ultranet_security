@@ -1,89 +1,34 @@
 <?php
-/**
- * sitemap.php — Dynamically generated XML sitemap.
- * Served at /sitemap.xml via the .htaccess rewrite rule below:
- *     RewriteRule ^sitemap\.xml$ sitemap.php [L]
- *
- * Automatically includes every active product and category, with
- * lastmod dates pulled from the database — no manual editing needed
- * when products are added, edited, or removed.
- */
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/includes/functions.php';
-
-header('Content-Type: application/xml; charset=utf-8');
-
-$db = getDB();
-
-function xmlDate($value): string
-{
-    return $value ? date('Y-m-d', strtotime($value)) : date('Y-m-d');
-}
-
 $categories = getAllCategories();
-$products   = $db->query(
-    "SELECT slug, image, name, updated_at, created_at FROM products WHERE status='active' ORDER BY updated_at DESC"
-)->fetchAll();
-
-echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-
-  <!-- Static pages -->
-  <url>
-    <loc><?= SITE_URL ?>/</loc>
-    <lastmod><?= date('Y-m-d') ?></lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-    <image:image>
-      <image:loc><?= ASSETS_URL ?>/img/hero-bg.jpg</image:loc>
-      <image:title>CCTV Installation Karachi - UltraNet Security</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc><?= SITE_URL ?>/products.php</loc>
-    <lastmod><?= date('Y-m-d') ?></lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc><?= SITE_URL ?>/calculator.php</loc>
-    <lastmod><?= date('Y-m-d') ?></lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc><?= SITE_URL ?>/privacy-policy.php</loc>
-    <lastmod><?= date('Y-m-d') ?></lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Category pages -->
-  <?php foreach ($categories as $cat): ?>
-  <url>
-    <loc><?= SITE_URL ?>/products.php?category=<?= h($cat['slug']) ?></loc>
-    <lastmod><?= xmlDate($cat['updated_at'] ?? null) ?></lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <?php endforeach; ?>
-
-  <!-- Product pages (every active product, auto-included) -->
-  <?php foreach ($products as $p): ?>
-  <url>
-    <loc><?= SITE_URL ?>/product/<?= h($p['slug']) ?></loc>
-    <lastmod><?= xmlDate($p['updated_at'] ?: $p['created_at']) ?></lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <?php if ($p['image']): ?>
-    <image:image>
-      <image:loc><?= h(productImageUrl($p['image'])) ?></image:loc>
-      <image:title><?= h($p['name']) ?></image:title>
-    </image:image>
-    <?php endif; ?>
-  </url>
-  <?php endforeach; ?>
-
-</urlset>
+$byId = array_column($categories, null, 'id');
+$products = getDB()->query("SELECT slug, image, name, category_id, updated_at, created_at FROM products WHERE status='active' ORDER BY id")->fetchAll();
+$populated = [];
+foreach ($products as $p) {
+    $id = (int)$p['category_id'];
+    $populated[$id] = true;
+    if (!empty($byId[$id]['parent_id'])) $populated[(int)$byId[$id]['parent_id']] = true;
+}
+header('Content-Type: application/xml; charset=utf-8');
+function sitemapXml(string $value): string { return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8'); }
+function sitemapEntry(string $path, ?string $lastmod = null, ?string $image = null): void {
+    echo '<url><loc>'.sitemapXml(SITE_URL.$path).'</loc>';
+    if ($lastmod) echo '<lastmod>'.$lastmod.'</lastmod>';
+    if ($image) echo '<image:image><image:loc>'.sitemapXml($image).'</image:loc></image:image>';
+    echo "</url>\n";
+}
+echo '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n";
+// Do not invent daily modification dates for unchanged static pages.
+foreach (['/', '/products.php', '/calculator.php', '/privacy-policy.php'] as $path) sitemapEntry($path);
+foreach ($categories as $category) {
+    if (!isset($populated[(int)$category['id']])) continue;
+    $parent = $byId[(int)($category['parent_id'] ?? 0)] ?? null;
+    // Listing content also changes when products are edited; omit incomplete category dates.
+    sitemapEntry(categoryCatalogPath($category, $parent));
+}
+foreach ($products as $p) {
+    sitemapEntry('/product/'.$p['slug'], sitemapDate($p['updated_at'] ?: $p['created_at']), $p['image'] ? productImageUrl($p['image']) : null);
+}
+echo '</urlset>';

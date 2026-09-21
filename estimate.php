@@ -2,7 +2,9 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$ref = trim($_GET['ref'] ?? '');
+header('X-Robots-Tag: noindex, nofollow');
+header('Cache-Control: private, no-store');
+$ref = queryText('ref');
 $req = $ref ? getCalculatorRequestByRef($ref) : null;
 
 if (!$req) {
@@ -22,6 +24,7 @@ $gbLabel = function ($gb) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Estimate <?= h($req['ref_code']) ?> | UltraNet Security</title>
 <meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">

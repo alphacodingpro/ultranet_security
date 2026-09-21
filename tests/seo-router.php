@@ -1,0 +1,8 @@
+<?php
+if (PHP_SAPI !== 'cli-server') { http_response_code(404); exit; }
+$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+if(preg_match('~^/product/([^/]+)$~',$path,$m)) {$_GET['slug']=rawurldecode($m[1]);require dirname(__DIR__).'/product.php';return true;}
+if($path==='/sitemap.xml'){require dirname(__DIR__).'/sitemap.php';return true;}
+if($path==='/robots.txt'){require dirname(__DIR__).'/robots.php';return true;}
+if($path==='/'||is_file(dirname(__DIR__).$path)) return false;
+require dirname(__DIR__).'/includes/404.php';

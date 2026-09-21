@@ -2,6 +2,11 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
+if (basename((string)parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH)) === 'index.php') {
+    $query = $_SERVER['QUERY_STRING'] ?? '';
+    header('Location: '.SITE_URL.'/'.($query !== '' ? '?'.$query : ''), true, 301); exit;
+}
+
 $pageTitle    = 'CCTV Installation Karachi | UltraNet Security';
 $metaDesc     = 'Professional CCTV installation in Karachi by UltraNet Security. Hikvision & Dahua authorized installer for homes, offices & shops. Call 0309-1243189.';
 $metaKeywords = 'CCTV installation Karachi, security camera Karachi, Hikvision Karachi, Dahua Karachi, CCTV Manzoor Colony';
@@ -24,14 +29,14 @@ include __DIR__ . '/includes/header.php';
 
 <!-- HERO -->
 <section id="home" class="hero" aria-label="Hero section">
-  <img class="hero-bg-img" src="<?= ASSETS_URL ?>/img/hero-bg.jpg" alt="CCTV security camera installation background Karachi" width="1600" height="900" loading="eager">
+  <img class="hero-bg-img" src="<?= ASSETS_URL ?>/img/hero-bg.jpg" alt="CCTV security camera installation background Karachi" width="1600" height="900" loading="eager" fetchpriority="high">
   <div class="hero-overlay"></div>
   <div class="container">
     <div class="row align-items-center g-4">
       <div class="col-lg-7 hero-content">
         <div class="hero-badge"><i class="fa-solid fa-shield-halved"></i> KARACHI'S TRUSTED CCTV EXPERTS</div>
-        <h1>PROTECT<br>WHAT <span>MATTERS</span></h1>
-        <p class="hero-sub">MOST</p>
+        <h1>CCTV INSTALLATION<br>IN <span>KARACHI</span></h1>
+        <p class="hero-sub">PROTECT WHAT MATTERS MOST</p>
         <p class="hero-lead">Professional CCTV installation for homes, offices, shops & factories across Karachi. Hikvision & Dahua authorized installer.<br><strong style="color:#fff">Call: 0309-1243189</strong></p>
         <div class="d-flex gap-3 flex-wrap">
           <a href="<?= SITE_URL ?>/products.php" class="btn-red"><i class="fa-solid fa-camera"></i> View Products</a>

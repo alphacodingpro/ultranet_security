@@ -16,8 +16,7 @@ $metaRobots   = $metaRobots   ?? 'index, follow';
 $ogType       = $ogType       ?? 'website';
 $ogImage      = $ogImage      ?? (ASSETS_URL . '/img/og-image.jpg');
 $extraSchema  = $extraSchema  ?? []; // array of JSON-LD arrays, page-specific (Product, FAQPage, Breadcrumb...)
-$allCategories = getAllCategories();
-$searchQuery  = h($_GET['q'] ?? '');
+$searchQuery = h(queryText('q'));
 ?>
 <!DOCTYPE html>
 <html lang="en-PK">
@@ -32,8 +31,6 @@ $searchQuery  = h($_GET['q'] ?? '');
   <meta name="author"       content="UltraNet Security Karachi">
   <meta name="geo.region"   content="PK-SD">
   <meta name="geo.placename" content="Karachi">
-  <meta name="geo.position" content="24.8607;67.0011">
-  <meta name="ICBM"         content="24.8607, 67.0011">
   <link rel="canonical"     href="<?= h($canonicalUrl) ?>">
 
   <!-- Open Graph -->
@@ -60,7 +57,8 @@ $searchQuery  = h($_GET['q'] ?? '');
 
   <script>
     (function () {
-      var savedTheme = localStorage.getItem('theme');
+      var savedTheme;
+      try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
       var theme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.dataset.theme = theme;
     }());
@@ -77,7 +75,7 @@ $searchQuery  = h($_GET['q'] ?? '');
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <!-- Main CSS -->
-  <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/style.css">
+  <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/style.css?v=<?= filemtime(__DIR__.'/../assets/css/style.css') ?>">
 
   <!-- ══════════ STRUCTURED DATA: LocalBusiness (sitewide) ══════════ -->
   <script type="application/ld+json">
@@ -89,7 +87,6 @@ $searchQuery  = h($_GET['q'] ?? '');
     "image" => ASSETS_URL . "/img/og-image.jpg",
     "url" => SITE_URL . "/",
     "telephone" => "+92-309-1243189",
-    "priceRange" => "PKR 15,000 - PKR 200,000",
     "address" => [
       "@type" => "PostalAddress",
       "streetAddress" => "House No 239, Manzoor Colony, Hill Town St 10",
@@ -98,7 +95,6 @@ $searchQuery  = h($_GET['q'] ?? '');
       "postalCode" => "75460",
       "addressCountry" => "PK"
     ],
-    "geo" => ["@type" => "GeoCoordinates", "latitude" => "24.8607", "longitude" => "67.0011"],
     "openingHoursSpecification" => [
       "@type" => "OpeningHoursSpecification",
       "dayOfWeek" => ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],

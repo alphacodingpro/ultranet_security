@@ -18,6 +18,14 @@ function getDB(): PDO
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
     } catch (PDOException $e) {
+        http_response_code(503);
+        header('Retry-After: 300');
+        header('Cache-Control: no-store');
+        if (strtolower(env('APP_DEBUG', 'false')) !== 'true') {
+            error_log('Database connection unavailable (code '.$e->getCode().')');
+            header('Content-Type: text/html; charset=utf-8');
+            die('<!doctype html><html lang="en"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><h1>We will be back shortly</h1><p>Please try again in a few minutes, or call 0309-1243189.</p></html>');
+        }
         $code = $e->getCode();
         $msg  = $e->getMessage();
 

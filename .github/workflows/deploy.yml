@@ -14,6 +14,9 @@ jobs:
     - name: Get latest code
       uses: actions/checkout@v3
     
+    - name: PHP syntax gate
+      run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+
     - name: Sync files to Server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -22,10 +25,23 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: ./
         # Niche wali lines aapki files aur folders ko cPanel par update hone se bachayengi:
-        sync-ignored: |
+        exclude: |
           .env
           **/uploads/products**
           **/img/**
           **/assets/img/**
-          .git/
-          .github/
+          **/.git*
+          **/.git*/**
+          **/tests/**
+          **/tools/**
+          **/node_modules/**
+          **/.DS_Store
+          seo-live-audit.json
+
+    - name: Live SEO crawl after deployment
+      run: python3 tools/seo-live-audit.py
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: live-seo-audit
+        path: seo-live-audit.json

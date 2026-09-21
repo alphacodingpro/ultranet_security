@@ -254,8 +254,9 @@ footer p{font-size:13px;line-height:1.7}
 .wa-float:hover .wa-tooltip{opacity:1}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s}
-.reveal.visible{opacity:1;transform:none}
+.reveal{opacity:1;transform:none}
+.reveal.reveal-pending{opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s}
+.reveal.reveal-pending.visible{opacity:1;transform:none}
 
 /* DARK THEME */
 [data-theme="dark"]{

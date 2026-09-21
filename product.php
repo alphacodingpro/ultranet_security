@@ -2,11 +2,16 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$slug = trim($_GET['slug'] ?? '');
+$slug = queryText('slug');
 if (!$slug) { header('Location: ' . SITE_URL . '/products.php'); exit; }
 
 $product = getProductBySlug($slug);
 if (!$product) { header('HTTP/1.0 404 Not Found'); include __DIR__ . '/includes/404.php'; exit; }
+
+// Redirect the query-string alias only; rewritten /product/ URLs stay unchanged.
+if (basename((string)parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH)) === 'product.php') {
+    header('Location: '.SITE_URL.'/product/'.$product['slug'], true, 301); exit;
+}
 
 $related       = getRelatedProducts((int)$product['category_id'], (int)$product['id'], 4);
 $extraImages   = getProductImages((int)$product['id']);
@@ -25,7 +30,7 @@ $pageTitle    = $product['meta_title']
     ? seoTitle($product['meta_title'], 'UltraNet Security', 60)
     : seoTitle($product['name'], 'UltraNet Security Karachi', 60);
 $metaDesc     = seoDescription(
-    $product['meta_description'] ?: ($product['short_desc'] ?: ('Buy ' . $product['name'] . ' in Karachi at best price. UltraNet Security authorized dealer, Hikvision & Dahua.')),
+    $product['meta_description'] ?: ($product['short_desc'] ?: ('Buy ' . $product['name'] . ' in Karachi. Ask UltraNet Security about availability, pricing and installation.')),
     155
 );
 $metaKeywords = implode(', ', array_filter([$product['brand'], $product['name'], 'Karachi', 'CCTV', 'security camera']));
@@ -33,10 +38,14 @@ $canonicalSlug = '/product/' . $product['slug'];
 $ogType       = 'product';
 $ogImage      = productImageUrl($product['image']);
 
+$productCategory = getCategoryById((int)$product['category_id']);
+$productCategoryParent = $productCategory && !empty($productCategory['parent_id']) ? getCategoryById((int)$productCategory['parent_id']) : null;
+$productCategoryUrl = $productCategory ? SITE_URL.categoryCatalogPath($productCategory,$productCategoryParent) : SITE_URL.'/products.php';
+
 $breadcrumbItems = [['name' => 'Home', 'url' => SITE_URL . '/']];
 $breadcrumbItems[] = ['name' => 'Products', 'url' => SITE_URL . '/products.php'];
 if ($product['category_slug']) {
-    $breadcrumbItems[] = ['name' => $product['category_name'], 'url' => SITE_URL . '/products.php?category=' . $product['category_slug']];
+    $breadcrumbItems[] = ['name' => $product['category_name'], 'url' => $productCategoryUrl];
 }
 $breadcrumbItems[] = ['name' => $product['name'], 'url' => SITE_URL . '/product/' . $product['slug']];
 
@@ -114,7 +123,7 @@ include __DIR__ . '/includes/header.php';
         <li class="breadcrumb-item"><a href="<?= SITE_URL ?>/products.php">Products</a></li>
         <?php if ($product['category_slug']): ?>
         <li class="breadcrumb-item">
-          <a href="<?= SITE_URL ?>/products.php?category=<?= h($product['category_slug']) ?>"><?= h($product['category_name']) ?></a>
+          <a href="<?= h($productCategoryUrl) ?>"><?= h($product['category_name']) ?></a>
         </li>
         <?php endif; ?>
         <li class="breadcrumb-item active" aria-current="page"><?= h($product['name']) ?></li>
@@ -143,16 +152,16 @@ include __DIR__ . '/includes/header.php';
 
         <!-- IMAGES PANEL -->
         <div class="pg-panel active" id="panel-images" style="position:relative">
-          <?php if (!empty($product['old_price']) && $product['old_price'] > $product['price']): ?>
+          <?php if ((float)$product['price'] > 0 && !empty($product['old_price']) && $product['old_price'] > $product['price']): ?>
           <div class="prod-detail-badge-sale"><?= round((1 - $product['price']/$product['old_price'])*100) ?>% OFF</div>
           <?php endif; ?>
 
           <div class="swiper pg-main-swiper">
             <div class="swiper-wrapper">
-              <?php foreach ($gallery as $imgUrl): ?>
+              <?php foreach ($gallery as $galleryIndex => $imgUrl): ?>
               <div class="swiper-slide">
-                <img src="<?= h($imgUrl) ?>" alt="<?= h($product['name']) ?> Karachi"
-                     onerror="this.src='<?= ASSETS_URL ?>/img/no-image.jpg'">
+                <img src="<?= h($imgUrl) ?>" alt="<?= h($product['name']) ?> — view <?= $galleryIndex+1 ?>" width="800" height="600" decoding="async" loading="<?= $galleryIndex===0?'eager':'lazy' ?>" fetchpriority="<?= $galleryIndex===0?'high':'auto' ?>"
+                     onerror="this.onerror=null;this.src='<?= ASSETS_URL ?>/img/no-image.jpg'">
               </div>
               <?php endforeach; ?>
             </div>
@@ -167,7 +176,7 @@ include __DIR__ . '/includes/header.php';
           <div class="pg-thumbs">
             <?php foreach ($gallery as $i => $imgUrl): ?>
             <div class="pg-thumb <?= $i===0?'active':'' ?>" data-index="<?= $i ?>">
-              <img src="<?= h($imgUrl) ?>" alt="thumbnail <?= $i+1 ?>" onerror="this.src='<?= ASSETS_URL ?>/img/no-image.jpg'">
+              <img src="<?= h($imgUrl) ?>" alt="thumbnail <?= $i+1 ?>" onerror="this.onerror=null;this.src='<?= ASSETS_URL ?>/img/no-image.jpg'">
             </div>
             <?php endforeach; ?>
           </div>
@@ -178,7 +187,7 @@ include __DIR__ . '/includes/header.php';
         <?php if ($hasVideo): ?>
         <div class="pg-panel" id="panel-video">
           <?php if ($videoEmbed): ?>
-          <iframe class="pg-video-frame" src="<?= h($videoEmbed) ?>" allowfullscreen
+          <iframe title="<?= h($product['name']) ?> product video" loading="lazy" class="pg-video-frame" src="<?= h($videoEmbed) ?>" allowfullscreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
           <?php else: ?>
           <div style="padding:40px;text-align:center;color:var(--muted)">
@@ -207,8 +216,8 @@ include __DIR__ . '/includes/header.php';
       <?php endif; ?>
 
       <div class="prod-detail-price">
-        <?= formatPrice($product['price']) ?>
-        <?php if (!empty($product['old_price']) && $product['old_price'] > $product['price']): ?>
+        <?= productPriceLabel($product['price']) ?>
+        <?php if ((float)$product['price'] > 0 && !empty($product['old_price']) && $product['old_price'] > $product['price']): ?>
         <span class="prod-detail-old"><?= formatPrice($product['old_price']) ?></span>
         <?php endif; ?>
       </div>
@@ -228,7 +237,7 @@ include __DIR__ . '/includes/header.php';
       <?php endif; ?>
 
       <div class="d-flex gap-3 flex-wrap my-4">
-        <a href="https://wa.me/923091243189?text=<?= urlencode('Hi, I want to order: '.$product['name'].' - '.formatPrice($product['price'])) ?>"
+        <a href="https://wa.me/923091243189?text=<?= urlencode('Hi, I want to order: '.$product['name'].' - '.productPriceLabel($product['price'])) ?>"
            class="btn-red flex-grow-1" style="justify-content:center" target="_blank">
           <i class="fa-brands fa-whatsapp"></i> Order on WhatsApp
         </a>
@@ -279,22 +288,23 @@ include __DIR__ . '/includes/header.php';
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   // Init main image swiper
-  const mainSwiper = new Swiper('.pg-main-swiper', {
+  const mainSwiper = typeof Swiper === 'function' ? new Swiper('.pg-main-swiper', {
     loop: <?= count($gallery) > 1 ? 'true' : 'false' ?>,
     navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
     pagination: { el: '.swiper-pagination', clickable: true },
-  });
+  }) : null;
 
   // Thumbnail click -> slide to that image
   document.querySelectorAll('.pg-thumb').forEach(thumb => {
     thumb.addEventListener('click', function () {
+      if (!mainSwiper) return;
       const idx = parseInt(this.getAttribute('data-index'));
       mainSwiper.slideToLoop ? mainSwiper.slideToLoop(idx) : mainSwiper.slideTo(idx);
       document.querySelectorAll('.pg-thumb').forEach(t => t.classList.remove('active'));
       this.classList.add('active');
     });
   });
-  mainSwiper.on('slideChange', function () {
+  if (mainSwiper) mainSwiper.on('slideChange', function () {
     const real = mainSwiper.realIndex;
     document.querySelectorAll('.pg-thumb').forEach(t => t.classList.remove('active'));
     const active = document.querySelector('.pg-thumb[data-index="' + real + '"]');
@@ -311,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.pg-panel').forEach(p => p.classList.remove('active'));
       document.getElementById('panel-' + tab).classList.add('active');
       // Update swiper size in case it was hidden
-      if (tab === 'images') mainSwiper.update();
+      if (tab === 'images' && mainSwiper) mainSwiper.update();
     });
   });
 });

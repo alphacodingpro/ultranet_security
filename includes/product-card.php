@@ -7,8 +7,8 @@
     <img src="<?= h(productImageUrl($p['image'])) ?>"
          alt="<?= h($p['name']) ?> - <?= h($p['brand'] ?? '') ?> Karachi"
          width="400" height="300" loading="lazy"
-         onerror="this.src='<?= ASSETS_URL ?>/img/no-image.jpg'">
-    <?php if (!empty($p['old_price']) && $p['old_price'] > $p['price']): ?>
+         onerror="this.onerror=null;this.src='<?= ASSETS_URL ?>/img/no-image.jpg'">
+    <?php if ((float)$p['price'] > 0 && !empty($p['old_price']) && $p['old_price'] > $p['price']): ?>
     <span class="prod-badge-sale">SALE</span>
     <?php endif; ?>
     <?php if ($p['stock_status'] === 'out_of_stock'): ?>
@@ -29,12 +29,12 @@
     <?php endif; ?>
     <div class="prod-footer">
       <div class="prod-price">
-        <?= formatPrice($p['price']) ?>
-        <?php if (!empty($p['old_price']) && $p['old_price'] > $p['price']): ?>
+        <?= productPriceLabel($p['price']) ?>
+        <?php if ((float)$p['price'] > 0 && !empty($p['old_price']) && $p['old_price'] > $p['price']): ?>
         <span class="prod-old-price"><?= formatPrice($p['old_price']) ?></span>
         <?php endif; ?>
       </div>
-      <a href="https://wa.me/923091243189?text=<?= urlencode('Hi, I am interested in: '.$p['name'].' ('.formatPrice($p['price']).')') ?>"
+      <a href="https://wa.me/923091243189?text=<?= urlencode('Hi, I am interested in: '.$p['name'].' ('.productPriceLabel($p['price']).')') ?>"
          class="prod-wa-btn" target="_blank" aria-label="Enquire on WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
       </a>

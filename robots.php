@@ -18,5 +18,9 @@ Disallow: /includes/
 Disallow: /database/
 Disallow: /patch/
 Disallow: /.env
+Disallow: /.git/
+Disallow: /tests/
+Disallow: /tools/
+Disallow: /db-check.php
 
 Sitemap: <?= SITE_URL ?>/sitemap.xml

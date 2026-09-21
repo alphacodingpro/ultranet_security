@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const themeColor = document.querySelector('meta[name="theme-color"]');
   const setTheme = (theme) => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('theme', theme);
+    try { localStorage.setItem('theme', theme); } catch (e) { /* Storage may be disabled. */ }
     if (themeToggle) {
       const isDark = theme === 'dark';
       themeToggle.setAttribute('aria-pressed', String(isDark));
@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── SCROLL REVEAL ── */
   const revealEls = document.querySelectorAll('.reveal');
-  if (revealEls.length) {
+  if (revealEls.length && 'IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const revealObs = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
-    revealEls.forEach(el => revealObs.observe(el));
+    revealEls.forEach(el => { revealObs.observe(el); el.classList.add('reveal-pending'); });
   }
 
   /* ── COUNTER ANIMATION ── */
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 28);
   }
   const counterEls = document.querySelectorAll('.counter-num[data-target]');
-  if (counterEls.length) {
+  if (counterEls.length && 'IntersectionObserver' in window) {
     const cObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) { animateCounter(e.target); cObs.unobserve(e.target); }

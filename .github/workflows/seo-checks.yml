@@ -1,0 +1,51 @@
+name: SEO checks
+on:
+  push:
+    branches: [main, codex/seo-audit]
+permissions:
+  contents: read
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test-only
+          MYSQL_DATABASE: ultranet_security
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      SITE_URL: http://127.0.0.1:8080
+      DB_NAME: ultranet_security
+      DB_USER: root
+      DB_PASS: test-only
+      APP_DEBUG: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and existing package regressions
+        run: |
+          find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+          node --check assets/js/main.js
+          php tests/budget-package-test.php
+      - name: SEO database and HTTP regressions
+        env:
+          DB_HOST: 127.0.0.1;port=${{ job.services.db.ports[3306] }}
+        run: |
+          php tests/seo-fixture.php
+          php -S 127.0.0.1:8080 tests/seo-router.php > /tmp/php-seo.log 2>&1 &
+          for attempt in 1 2 3 4 5; do curl -s http://127.0.0.1:8080/robots.txt >/dev/null && break || sleep 1; done
+          python3 tests/seo-http-test.py
+      - name: Live baseline audit
+        if: github.ref != 'refs/heads/main'
+        run: python3 tools/seo-live-audit.py --sample
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seo-audit
+          path: seo-live-audit.json
