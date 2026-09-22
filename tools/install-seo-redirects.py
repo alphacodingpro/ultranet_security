@@ -2,7 +2,7 @@
 Uses the existing deployment FTP account. Never reads .env or prints credentials.
 Restores the original bytes if the public redirect check fails.
 """
-import ftplib, io, os, urllib.request, urllib.error
+import ftplib, io, os, time, http.client, urllib.request, urllib.error
 BLOCK=b'''# BEGIN UltraNet legacy package redirect
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -23,7 +23,15 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(BLOCK+b'\n'+original))
         try:
             for path in ['/packages/','/packages']:
-                with urllib.request.urlopen('https://ultranetsecurity.com'+path,timeout=20) as response:
+                request=urllib.request.Request('https://ultranetsecurity.com'+path, headers={'User-Agent':'UltraNet-Owner-SEO-Audit/1.0'})
+                for attempt in range(3):
+                    try:
+                        response=urllib.request.urlopen(request,timeout=20)
+                        break
+                    except (http.client.RemoteDisconnected, urllib.error.URLError):
+                        if attempt==2: raise
+                        time.sleep(2)
+                with response:
                     print('Legacy check:',path,response.status,response.geturl())
                     if response.status!=200 or response.geturl()!='https://ultranetsecurity.com/calculator.php':
                         raise RuntimeError('Legacy redirect verification failed')
