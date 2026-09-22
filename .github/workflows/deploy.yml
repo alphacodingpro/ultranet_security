@@ -55,6 +55,7 @@ jobs:
       run: python3 tools/install-seo-redirects.py
 
     - name: Live SEO crawl after deployment
+      if: always()
       run: python3 tools/seo-live-audit.py
     - uses: actions/upload-artifact@v4
       if: always()
