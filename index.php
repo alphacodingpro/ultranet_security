@@ -159,7 +159,7 @@ include __DIR__ . '/includes/header.php';
       <div class="col-md-6 col-lg-4 reveal">
         <article class="svc-card">
           <div class="svc-img">
-            <img src="<?= ASSETS_URL ?>/img/<?= h($svc['img']) ?>" alt="<?= h($svc['title']) ?> Karachi" width="600" height="400" loading="lazy">
+            <img src="<?= h(siteImageUrl($svc['img'])) ?>" alt="<?= h($svc['title']) ?> Karachi" width="600" height="400" loading="lazy">
             <div class="svc-img-overlay"></div>
             <div class="svc-img-tag"><?= h($svc['tag']) ?></div>
           </div>
@@ -182,7 +182,7 @@ include __DIR__ . '/includes/header.php';
     <div class="row align-items-center g-5">
       <div class="col-lg-5 reveal">
         <div class="why-img-wrap">
-          <img src="<?= ASSETS_URL ?>/img/why-us.jpg" alt="CCTV security monitoring room Karachi" width="700" height="900" loading="lazy">
+          <img src="<?= h(siteImageUrl('why-us.jpg')) ?>" alt="CCTV security monitoring room Karachi" width="700" height="900" loading="lazy">
           <div class="why-img-badge"><div class="big">10+</div><div class="sm">YEARS IN KARACHI</div></div>
         </div>
       </div>

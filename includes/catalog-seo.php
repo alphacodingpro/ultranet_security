@@ -31,3 +31,10 @@ function sitemapDate($value): ?string
     if (!$value || ($time = strtotime((string)$value)) === false || $time > time()) return null;
     return gmdate('Y-m-d', $time);
 }
+
+function siteImageUrl(string $filename): string
+{
+    $name = pathinfo(basename($filename), PATHINFO_FILENAME).'.webp';
+    $optimized = __DIR__.'/../assets/optimized/'.$name;
+    return is_file($optimized) ? ASSETS_URL.'/optimized/'.$name.'?v='.filemtime($optimized) : ASSETS_URL.'/img/'.rawurlencode(basename($filename));
+}

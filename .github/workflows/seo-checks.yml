@@ -33,6 +33,10 @@ jobs:
           find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
           node --check assets/js/main.js
           php tests/budget-package-test.php
+      - name: Build and validate homepage image copies
+        run: |
+          python3 -m pip install 'Pillow==11.3.0'
+          python3 tools/build-web-images.py
       - name: SEO database and HTTP regressions
         env:
           DB_HOST: 127.0.0.1;port=${{ job.services.db.ports[3306] }}
