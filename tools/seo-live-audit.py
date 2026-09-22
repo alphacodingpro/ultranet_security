@@ -58,9 +58,22 @@ urls=[u for u in dict.fromkeys(urls) if urllib.parse.urlparse(u).netloc=='ultran
 report['sitemap_url_count']=len(urls)
 if '--sample' in sys.argv:urls=urls[:6]+[u for u in urls if '/product/' in u][:3]
 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:report['pages']=list(pool.map(audit,dict.fromkeys(urls)))
+# Check first-party image URLs once; HEAD avoids downloading full-resolution photos.
+images=sorted({url for p in report['pages'] for url in p['images'] if urllib.parse.urlparse(url).netloc=='ultranetsecurity.com'})
+def image_check(url):
+    time.sleep(.2)
+    try:
+        req=urllib.request.Request(url,method='HEAD',headers={'User-Agent':'UltraNet-Owner-SEO-Audit/1.0'})
+        with urllib.request.urlopen(req,timeout=15) as response:
+            return {'url':url,'status':response.status,'bytes':int(response.headers.get('Content-Length',0)),'type':response.headers.get('Content-Type','')}
+    except urllib.error.HTTPError as e:return {'url':url,'status':e.code}
+    except Exception as e:return {'url':url,'status':0,'error':type(e).__name__}
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:report['image_checks']=list(pool.map(image_check,images))
+report['image_errors']=[i for i in report['image_checks'] if i['status']!=200 or not i.get('type','').startswith('image/')]
+report['large_images']=[i for i in report['image_checks'] if i.get('bytes',0)>500000]
 report['duplicate_titles']={t:count for t,count in collections.Counter(p['title'] for p in report['pages']).items() if t and count>1}
 report['duplicate_descriptions']={t:count for t,count in collections.Counter(p['description'] for p in report['pages']).items() if t and count>1}
 with open('seo-live-audit.json','w') as f:json.dump(report,f,indent=2)
-print(json.dumps({'checks':report['checks'],'sitemap_url_count':report['sitemap_url_count'],'crawled':len(report['pages']),'pages_with_issues':sum(bool(p['issues']) for p in report['pages']),'duplicate_titles':report['duplicate_titles'],'duplicate_descriptions':report['duplicate_descriptions']},indent=2))
+print(json.dumps({'checks':report['checks'],'sitemap_url_count':report['sitemap_url_count'],'crawled':len(report['pages']),'pages_with_issues':sum(bool(p['issues']) for p in report['pages']),'image_errors':report['image_errors'],'large_images':report['large_images'],'duplicate_titles':report['duplicate_titles'],'duplicate_descriptions':report['duplicate_descriptions']},indent=2))
 for p in report['pages']:
     if p['issues']:print(json.dumps({k:p[k] for k in ['url','status','canonical','issues']}))

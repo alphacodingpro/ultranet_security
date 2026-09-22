@@ -41,6 +41,11 @@ jobs:
           php -S 127.0.0.1:8080 tests/seo-router.php > /tmp/php-seo.log 2>&1 &
           for attempt in 1 2 3 4 5; do curl -s http://127.0.0.1:8080/robots.txt >/dev/null && break || sleep 1; done
           python3 tests/seo-http-test.py
+      - name: Canonical origin regressions
+        run: |
+          SITE_URL=https://ultranetsecurity.com php -S 127.0.0.1:8082 tests/seo-router.php > /tmp/php-origin.log 2>&1 &
+          for attempt in 1 2 3 4 5; do curl -s http://127.0.0.1:8082/robots.php >/dev/null && break || sleep 1; done
+          python3 tests/seo-origin-test.py
       - name: Live baseline audit
         if: github.ref != 'refs/heads/main'
         run: python3 tools/seo-live-audit.py --sample

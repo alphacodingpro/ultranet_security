@@ -38,6 +38,13 @@ jobs:
           **/.DS_Store
           seo-live-audit.json
 
+    - name: Preserve hosting rules and redirect the legacy packages page
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      run: python3 tools/install-seo-redirects.py
+
     - name: Live SEO crawl after deployment
       run: python3 tools/seo-live-audit.py
     - uses: actions/upload-artifact@v4
