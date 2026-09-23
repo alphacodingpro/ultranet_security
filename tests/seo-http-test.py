@@ -3,12 +3,13 @@ from html.parser import HTMLParser
 BASE='http://127.0.0.1:8080'
 class Page(HTMLParser):
     def __init__(self,text):
-        super().__init__(); self.canonical=''; self.robots=''; self.mains=0; self.schemas=[]; self.script=False; self.buf='';self.feed(text)
+        super().__init__(); self.canonical=''; self.robots=''; self.mains=0; self.h1=0; self.schemas=[]; self.script=False; self.buf='';self.feed(text)
     def handle_starttag(self,tag,attrs):
         a=dict(attrs)
         if tag=='link' and a.get('rel')=='canonical':self.canonical=a.get('href','')
         if tag=='meta' and a.get('name')=='robots':self.robots=a.get('content','')
         if tag=='main':self.mains+=1
+        if tag=='h1':self.h1+=1
         if tag=='script' and a.get('type')=='application/ld+json':self.script=True;self.buf=''
     def handle_data(self,data):
         if self.script:self.buf+=data
