@@ -19,11 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deleted = 0;
     $failed = 0;
     $filesRemoved = 0;
-    foreach (array_unique($selected) as $token) {
+    $seen = [];
+    foreach ($selected as $token) {
         if (!is_string($token) || !preg_match('/^(primary|gallery):([1-9][0-9]*)$/D', $token, $match)) {
             $failed++;
             continue;
         }
+        if (isset($seen[$token])) continue;
+        $seen[$token] = true;
         $kind = $match[1];
         $id = (int)$match[2];
         if (!$id) { $failed++; continue; }
