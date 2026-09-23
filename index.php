@@ -256,7 +256,8 @@ include __DIR__ . '/includes/header.php';
     </div>
     <div class="d-flex flex-wrap gap-3 justify-content-center reveal">
       <?php foreach (['DHA Karachi','Clifton','Gulshan-e-Iqbal','PECHS','North Nazimabad','Gulistan-e-Johar','Manzoor Colony','Hill Town','Korangi','Malir','Landhi','Federal B Area','Nazimabad','Orangi Town','Saddar','Scheme 33','Bahria Town','Surjani Town','Keamari','Site Area'] as $area): ?>
-      <span class="area-tag"><i class="fa-solid fa-location-dot"></i> <?= h($area) ?></span>
+      <?php if($area==='DHA Karachi'): ?><a class="area-tag text-decoration-none" href="<?= SITE_URL ?>/cctv-camera-installation-dha-karachi"><i class="fa-solid fa-location-dot"></i> <?= h($area) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a><?php else: ?>
+      <span class="area-tag"><i class="fa-solid fa-location-dot"></i> <?= h($area) ?></span><?php endif; ?>
       <?php endforeach; ?>
     </div>
   </div>

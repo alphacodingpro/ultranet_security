@@ -10,6 +10,13 @@ RewriteRule ^packages/?$ /calculator.php [R=301,L]
 </IfModule>
 # END UltraNet legacy package redirect
 '''
+DHA_BLOCK=b'''# BEGIN UltraNet DHA landing page
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^cctv-camera-installation-dha-karachi/?$ cctv-camera-installation-dha-karachi.php [END]
+</IfModule>
+# END UltraNet DHA landing page
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -17,12 +24,19 @@ with ftplib.FTP(timeout=30) as ftp:
     # Refuse to create a new per-directory config that might override inherited rules.
     ftp.retrbinary('RETR .htaccess',old.write)
     original=old.getvalue()
-    if BLOCK in original:
-        print('Legacy redirect already installed; hosting rules preserved.')
+    additions=b''
+    if DHA_BLOCK not in original: additions+=DHA_BLOCK+b'\n'
+    if BLOCK not in original: additions+=BLOCK+b'\n'
+    if not additions:
+        print('Public redirects already installed; hosting rules preserved.')
     else:
-        ftp.storbinary('STOR .htaccess',io.BytesIO(BLOCK+b'\n'+original))
+        ftp.storbinary('STOR .htaccess',io.BytesIO(additions+original))
         try:
-            for path in ['/packages/','/packages']:
+            for path,final in [
+                ('/cctv-camera-installation-dha-karachi','/cctv-camera-installation-dha-karachi'),
+                ('/cctv-camera-installation-dha-karachi.php','/cctv-camera-installation-dha-karachi'),
+                ('/packages/','/calculator.php'),('/packages','/calculator.php'),
+            ]:
                 request=urllib.request.Request('https://ultranetsecurity.com'+path, headers={'User-Agent':'UltraNet-Owner-SEO-Audit/1.0'})
                 for attempt in range(3):
                     try:
@@ -32,11 +46,11 @@ with ftplib.FTP(timeout=30) as ftp:
                         if attempt==2: raise
                         time.sleep(2)
                 with response:
-                    print('Legacy check:',path,response.status,response.geturl())
-                    if response.status!=200 or response.geturl()!='https://ultranetsecurity.com/calculator.php':
-                        raise RuntimeError('Legacy redirect verification failed')
-            print('Legacy package URLs now redirect to the calculator; hosting rules preserved.')
+                    print('Public route check:',path,response.status,response.geturl())
+                    if response.status!=200 or response.geturl()!='https://ultranetsecurity.com'+final:
+                        raise RuntimeError('Public route verification failed')
+            print('DHA landing page and legacy redirect live; hosting rules preserved.')
         except Exception as exc:
-            print('Legacy check failed:',type(exc).__name__,str(exc))
+            print('Public route check failed:',type(exc).__name__,str(exc))
             ftp.storbinary('STOR .htaccess',io.BytesIO(original))
-            raise RuntimeError('Legacy redirect validation failed; original hosting rules restored.') from None
+            raise RuntimeError('Route validation failed; original hosting rules restored.') from None

@@ -15,6 +15,7 @@ $bodyClass    = $bodyClass    ?? '';
 $metaRobots   = $metaRobots   ?? 'index, follow';
 $ogType       = $ogType       ?? 'website';
 $ogImage      = $ogImage      ?? (ASSETS_URL . '/img/og-image.jpg');
+$pageStyles   = $pageStyles   ?? [];
 $extraSchema  = $extraSchema  ?? []; // array of JSON-LD arrays, page-specific (Product, FAQPage, Breadcrumb...)
 $searchQuery = h(queryText('q'));
 ?>
@@ -76,6 +77,11 @@ $searchQuery = h(queryText('q'));
 
   <!-- Main CSS -->
   <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/style.css?v=<?= filemtime(__DIR__.'/../assets/css/style.css') ?>">
+  <?php foreach ($pageStyles as $styleFile): ?>
+  <?php if (is_string($styleFile) && preg_match('/^[a-z0-9-]+\.css$/D', $styleFile) && is_file(__DIR__.'/../assets/css/'.$styleFile)): ?>
+  <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/<?= h($styleFile) ?>?v=<?= filemtime(__DIR__.'/../assets/css/'.$styleFile) ?>">
+  <?php endif; ?>
+  <?php endforeach; ?>
 
   <!-- ══════════ STRUCTURED DATA: LocalBusiness (sitewide) ══════════ -->
   <script type="application/ld+json">

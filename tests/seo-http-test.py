@@ -37,8 +37,15 @@ check(get('/index.php')[1]==BASE+'/','Homepage alias redirect')
 for path in ['/products.php?q%5B%5D=bad','/product.php?slug%5B%5D=bad','/search.php?q%5B%5D=bad']:
     check(get(path)[0]<500,'Array input handled')
 s,u,h,t,p=get('/estimate.php?ref=unknown');check(s==404 and 'noindex' in h.get('X-Robots-Tag','') and 'no-store' in h.get('Cache-Control',''),'Private estimates')
+dha='/cctv-camera-installation-dha-karachi'
+s,u,h,t,p=get(dha);check(s==200 and p.canonical==BASE+dha and p.robots=='index, follow' and p.h1==1,'DHA canonical, indexability and H1')
+check('Phases 1–8' in t and all(('Phase '+str(i)) in t for i in range(1,9)),'DHA phases 1–8')
+check('dha.css' in t and t.find('dha.css')<t.find('</head>') and 'assets/optimized/service-home.webp' in t,'DHA CSS in head and real compressed photo')
+check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, Phases 1–8' for x in p.schemas),'DHA Service schema')
+check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
+check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')

@@ -36,6 +36,7 @@
           <li><a href="<?= SITE_URL ?>/#services"><i class="fa-solid fa-chevron-right"></i> Office CCTV</a></li>
           <li><a href="<?= SITE_URL ?>/#services"><i class="fa-solid fa-chevron-right"></i> Shop Security</a></li>
           <li><a href="<?= SITE_URL ?>/#services"><i class="fa-solid fa-chevron-right"></i> AMC Services</a></li>
+          <li><a href="<?= SITE_URL ?>/cctv-camera-installation-dha-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV in DHA Karachi</a></li>
         </ul>
       </div>
       <div class="col-sm-6 col-lg-2">

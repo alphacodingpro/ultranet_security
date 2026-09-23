@@ -21,7 +21,7 @@ function sitemapEntry(string $path, ?string $lastmod = null, ?string $image = nu
 echo '<?xml version="1.0" encoding="UTF-8"?>'."\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n";
 // Do not invent daily modification dates for unchanged static pages.
-foreach (['/', '/products.php', '/calculator.php', '/privacy-policy.php'] as $path) sitemapEntry($path);
+foreach (['/', '/products.php', '/calculator.php', '/privacy-policy.php', '/cctv-camera-installation-dha-karachi'] as $path) sitemapEntry($path);
 foreach ($categories as $category) {
     if (!isset($populated[(int)$category['id']])) continue;
     $parent = $byId[(int)($category['parent_id'] ?? 0)] ?? null;

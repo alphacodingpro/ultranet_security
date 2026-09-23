@@ -1,7 +1,7 @@
 name: SEO checks
 on:
   push:
-    branches: [main, codex/seo-audit]
+    branches: [main, codex/seo-audit, codex/dha-karachi]
 permissions:
   contents: read
 jobs:
