@@ -49,10 +49,11 @@ include __DIR__ . '/includes/header.php';
           <strong style="font-size:15px"><?= h($m['name']) ?></strong>
           <?php if ($m['status']==='new'): ?><span class="status-badge status-order">New</span><?php endif; ?>
           <?php if ($m['email_sent']): ?><span class="status-badge status-active"><i class="fa-solid fa-envelope-circle-check me-1"></i>Emailed</span><?php endif; ?>
+          <?php if (($m['source'] ?? '') === 'sitewide_popup'): ?><span class="badge bg-secondary">Website popup</span><?php endif; ?>
           <span class="text-muted small ms-auto"><?= date('d M Y, h:i A', strtotime($m['created_at'])) ?></span>
         </div>
         <div class="row g-2 mb-2" style="font-size:13px">
-          <div class="col-auto"><i class="fa-solid fa-phone text-muted me-1"></i><?= h($m['phone']) ?></div>
+          <?php if ($m['phone']): ?><div class="col-auto"><i class="fa-solid fa-phone text-muted me-1"></i><?= h($m['phone']) ?></div><?php endif; ?>
           <?php if ($m['email']): ?><div class="col-auto"><i class="fa-solid fa-envelope text-muted me-1"></i><?= h($m['email']) ?></div><?php endif; ?>
           <?php if ($m['service']): ?><div class="col-auto"><i class="fa-solid fa-toolbox text-muted me-1"></i><?= h($m['service']) ?></div><?php endif; ?>
           <?php if ($m['area']): ?><div class="col-auto"><i class="fa-solid fa-location-dot text-muted me-1"></i><?= h($m['area']) ?></div><?php endif; ?>
@@ -64,8 +65,10 @@ include __DIR__ . '/includes/header.php';
       </div>
       <div class="d-flex flex-column gap-2" style="min-width:180px">
         <div class="d-flex gap-2">
+          <?php if ($m['phone']): ?>
           <a href="tel:<?= h($m['phone']) ?>" class="action-btn" style="background:rgba(13,110,253,.1);color:#0d6efd" title="Call"><i class="fa-solid fa-phone"></i></a>
           <a href="https://wa.me/<?= preg_replace('/[^0-9]/','',$m['phone']) ?>" target="_blank" class="action-btn" style="background:rgba(37,211,102,.1);color:#25D366" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <?php endif; ?>
           <?php if ($m['email']): ?>
           <a href="mailto:<?= h($m['email']) ?>" class="action-btn" style="background:rgba(230,57,70,.1);color:var(--admin-accent)" title="Email"><i class="fa-solid fa-envelope"></i></a>
           <?php endif; ?>
