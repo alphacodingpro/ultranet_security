@@ -147,4 +147,78 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
   }
 
+
+  /* ── ONE-TIME SITEWIDE CONTACT POPUP ── */
+  const leadModal = document.getElementById('visitorLeadModal');
+  const leadForm = document.getElementById('visitorLeadForm');
+  if (leadModal && leadForm) {
+    const leadKey = 'ultranet_contact_prompt_v1';
+    const leadError = document.getElementById('visitorLeadError');
+    const leadButton = leadForm.querySelector('button[type="submit"]');
+    let previousFocus = null;
+    let previousOverflow = '';
+
+    const dismissed = () => {
+      try { return localStorage.getItem(leadKey) === 'done'; }
+      catch (e) {
+        try { return sessionStorage.getItem(leadKey) === 'done'; }
+        catch (ignored) { return false; }
+      }
+    };
+    const remember = () => {
+      try { localStorage.setItem(leadKey, 'done'); }
+      catch (e) { try { sessionStorage.setItem(leadKey, 'done'); } catch (ignored) {} }
+    };
+    const close = () => {
+      remember();
+      leadModal.hidden = true;
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+    };
+    const open = () => {
+      if (dismissed() || !leadModal.hidden) return;
+      previousFocus = document.activeElement;
+      previousOverflow = document.body.style.overflow;
+      leadModal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      leadModal.querySelector('.lead-modal-close').focus();
+    };
+    window.setTimeout(open, 3500);
+    leadModal.querySelectorAll('[data-lead-close]').forEach(el => el.addEventListener('click', close));
+    document.getElementById('leadWhatsApp').addEventListener('click', close);
+    leadModal.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+      if (e.key !== 'Tab') return;
+      const items = Array.from(leadModal.querySelectorAll('button:not(:disabled), a[href], input:not([type="hidden"]):not([tabindex="-1"])'));
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    leadForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const phone = leadForm.elements.phone.value.trim();
+      const email = leadForm.elements.email.value.trim();
+      leadError.hidden = true;
+      if (!phone && !email) {
+        leadError.textContent = 'Enter a phone number or email address.';
+        leadError.hidden = false;
+        leadForm.elements.phone.focus();
+        return;
+      }
+      if (!leadForm.reportValidity()) return;
+      leadButton.disabled = true;
+      try {
+        const response = await fetch(leadForm.action, {method:'POST', body:new FormData(leadForm), credentials:'same-origin'});
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.message || 'Please try again.');
+        close();
+      } catch (err) {
+        leadError.textContent = err.message || 'Could not send. Please try again or WhatsApp us.';
+        leadError.hidden = false;
+      } finally {
+        leadButton.disabled = false;
+      }
+    });
+  }
+
 });
