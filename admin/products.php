@@ -109,6 +109,20 @@ include __DIR__ . '/includes/header.php';
 </div>
 <?php endif; ?>
 
+<!-- The form is separate from row action forms; checkboxes target it explicitly. -->
+<?php if ($products): ?>
+<form id="bulkProductDeleteForm" method="POST" action="<?= ADMIN_URL ?>/product-bulk-delete.php" class="admin-card mb-3">
+  <div class="admin-card-body py-3 d-flex align-items-center gap-3 flex-wrap">
+    <?php csrfField(); ?>
+    <input type="hidden" name="return_query" value="<?= h(http_build_query(array_merge($pageQuery, ['page' => $productPage]))) ?>">
+    <span id="bulkProductCount" class="small text-muted" aria-live="polite">Select products on this page</span>
+    <button id="bulkProductDeleteButton" type="submit" class="btn btn-danger btn-sm" disabled>
+      <i class="fa-solid fa-trash me-1"></i>Delete selected
+    </button>
+  </div>
+</form>
+<?php endif; ?>
+
 <!-- TABLE -->
 <div class="admin-card">
   <div class="admin-card-body p-0">
@@ -116,6 +130,7 @@ include __DIR__ . '/includes/header.php';
       <table class="admin-table">
         <thead>
           <tr>
+            <th scope="col"><input type="checkbox" id="selectAllProducts" class="form-check-input" aria-label="Select all products on this page" <?= $products ? '' : 'disabled' ?>></th>
             <th>#</th>
             <th>Image</th>
             <th>Name / Brand</th>
@@ -134,6 +149,7 @@ include __DIR__ . '/includes/header.php';
           <?php if ($products): ?>
           <?php foreach ($products as $p): ?>
           <tr>
+            <td><input type="checkbox" class="form-check-input product-bulk-select" form="bulkProductDeleteForm" name="ids[]" value="<?= (int)$p['id'] ?>" aria-label="Select <?= h($p['name']) ?>"></td>
             <td class="text-muted small"><?= $p['id'] ?></td>
             <td>
               <img src="<?= h(productImageUrl($p['image'])) ?>" alt="<?= h($p['name']) ?>"
@@ -191,7 +207,7 @@ include __DIR__ . '/includes/header.php';
           </tr>
           <?php endforeach; ?>
           <?php else: ?>
-          <tr><td colspan="12" class="text-center py-4 text-muted">No products match these filters. <a href="<?= ADMIN_URL ?>/products.php">Clear filters</a></td></tr>
+          <tr><td colspan="13" class="text-center py-4 text-muted">No products match these filters. <a href="<?= ADMIN_URL ?>/products.php">Clear filters</a></td></tr>
           <?php endif; ?>
         </tbody>
       </table>
@@ -233,4 +249,28 @@ include __DIR__ . '/includes/header.php';
 </div>
 <?php endif; ?>
 
+<script>
+(() => {
+  const form = document.getElementById('bulkProductDeleteForm');
+  if (!form) return;
+  const boxes = [...document.querySelectorAll('.product-bulk-select')];
+  const all = document.getElementById('selectAllProducts');
+  const button = document.getElementById('bulkProductDeleteButton');
+  const count = document.getElementById('bulkProductCount');
+  const update = () => {
+    const selected = boxes.filter(box => box.checked).length;
+    button.disabled = selected === 0;
+    count.textContent = selected ? selected + ' product' + (selected === 1 ? '' : 's') + ' selected on this page' : 'Select products on this page';
+    all.checked = boxes.length > 0 && selected === boxes.length;
+    all.indeterminate = selected > 0 && selected < boxes.length;
+  };
+  all.addEventListener('change', () => { boxes.forEach(box => { box.checked = all.checked; }); update(); });
+  boxes.forEach(box => box.addEventListener('change', update));
+  form.addEventListener('submit', event => {
+    const selected = boxes.filter(box => box.checked).length;
+    if (!selected || !confirm('Permanently delete ' + selected + ' selected product' + (selected === 1 ? '' : 's') + ' and their unused uploaded images? This cannot be undone.')) event.preventDefault();
+  });
+  update();
+})();
+</script>
 <?php include __DIR__ . '/includes/footer.php'; ?>
