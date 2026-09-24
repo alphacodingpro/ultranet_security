@@ -49,4 +49,18 @@ result = subprocess.check_output([
     "AND phone=''\")->fetchColumn();"
 ], text=True).strip()
 assert result == '1', 'Popup lead must be saved in Admin contact_messages'
+status, text = request('/quick-lead-submit.php', {
+    'csrf_token': token.group(1),
+    'phone': '+923091234567',
+})
+assert status == 200 and json.loads(text)['ok'], 'Phone-only lead must be accepted'
+result = subprocess.check_output([
+    'php', '-r',
+    "require 'config/config.php'; require 'includes/functions.php'; "
+    "echo getDB()->query(\"SELECT COUNT(*) FROM contact_messages "
+    "WHERE source='sitewide_popup' AND phone='+923091234567' "
+    "AND email IS NULL\")->fetchColumn();"
+], text=True).strip()
+assert result == '1', 'Phone-only lead must be saved without an email'
+
 print('Popup lead validation, CSRF and Admin persistence passed.')
