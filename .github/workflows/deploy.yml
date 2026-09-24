@@ -5,6 +5,10 @@ on:
     branches:
       - main  # Agar branch master hai to master likhein
 
+concurrency:
+  group: ultranet-production-ftp
+  cancel-in-progress: false
+
 jobs:
   web-deploy:
     name: Deploying to cPanel
@@ -25,6 +29,14 @@ jobs:
       run: |
         python3 -m pip install 'Pillow==11.3.0'
         python3 tools/build-web-images.py --live
+
+    - name: Verify this is the current main commit
+      run: |
+        remote_sha="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+        if [ -z "$remote_sha" ] || [ "$remote_sha" != "$GITHUB_SHA" ]; then
+          echo "Stopping stale deployment: this job is not the current main revision."
+          exit 1
+        fi
 
     - name: Sync files to Server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
