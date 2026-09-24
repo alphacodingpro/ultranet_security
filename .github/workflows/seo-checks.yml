@@ -1,7 +1,7 @@
 name: SEO checks
 on:
   push:
-    branches: [main, codex/seo-audit, codex/dha-karachi]
+    branches: [main, codex/seo-audit, codex/dha-karachi, codex/sitewide-contact-popup]
 permissions:
   contents: read
 jobs:
@@ -45,6 +45,7 @@ jobs:
           php -S 127.0.0.1:8080 tests/seo-router.php > /tmp/php-seo.log 2>&1 &
           for attempt in 1 2 3 4 5; do curl -s http://127.0.0.1:8080/robots.txt >/dev/null && break || sleep 1; done
           python3 tests/seo-http-test.py
+          python3 tests/quick-lead-http-test.py
       - name: Canonical origin regressions
         run: |
           SITE_URL=https://ultranetsecurity.com php -S 127.0.0.1:8082 tests/seo-router.php > /tmp/php-origin.log 2>&1 &
