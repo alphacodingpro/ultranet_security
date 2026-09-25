@@ -49,7 +49,7 @@ check('FAQPage' not in [x.get('@type') for x in p.schemas],'No deprecated FAQ ri
 check('wa.me/923091243189' in t and '/calculator.php' in t,'Home CCTV contact and calculator actions')
 check(get(home+'.php')[1]==BASE+home and get(home+'/')[1]==BASE+home,'Home CCTV URL aliases redirect')
 s,u,h,t,p=get('/')
-check('href="'+BASE+home+'"' in t and 'Explore Home CCTV' in t,'Homepage service card links to guide')
+check('href="'+BASE+home+'"' in t and 'Explore the Guide' in t,'Homepage service card links to guide')
 office='/office-cctv-installation-karachi'
 s,u,h,t,p=get(office)
 check(s==200 and p.canonical==BASE+office and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Office CCTV canonical, indexability and one main/H1')
