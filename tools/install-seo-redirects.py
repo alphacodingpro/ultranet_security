@@ -24,6 +24,13 @@ RewriteRule ^home-cctv-installation-karachi/?$ home-cctv-installation-karachi.ph
 </IfModule>
 # END UltraNet home CCTV landing page
 '''
+OFFICE_BLOCK=b'''# BEGIN UltraNet office CCTV landing page
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^office-cctv-installation-karachi/?$ office-cctv-installation-karachi.php [END]
+</IfModule>
+# END UltraNet office CCTV landing page
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -32,6 +39,7 @@ with ftplib.FTP(timeout=30) as ftp:
     ftp.retrbinary('RETR .htaccess',old.write)
     original=old.getvalue()
     additions=b''
+    if OFFICE_BLOCK not in original: additions+=OFFICE_BLOCK+b'\n'
     if HOME_BLOCK not in original: additions+=HOME_BLOCK+b'\n'
     if DHA_BLOCK not in original: additions+=DHA_BLOCK+b'\n'
     if BLOCK not in original: additions+=BLOCK+b'\n'
@@ -41,6 +49,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+original))
         try:
             for path,final in [
+                ('/office-cctv-installation-karachi','/office-cctv-installation-karachi'),
+                ('/office-cctv-installation-karachi.php','/office-cctv-installation-karachi'),
                 ('/home-cctv-installation-karachi','/home-cctv-installation-karachi'),
                 ('/home-cctv-installation-karachi.php','/home-cctv-installation-karachi'),
                 ('/cctv-camera-installation-dha-karachi','/cctv-camera-installation-dha-karachi'),
@@ -59,7 +69,7 @@ with ftplib.FTP(timeout=30) as ftp:
                     print('Public route check:',path,response.status,response.geturl())
                     if response.status!=200 or response.geturl()!='https://ultranetsecurity.com'+final:
                         raise RuntimeError('Public route verification failed')
-            print('Home and DHA landing pages and legacy redirect live; hosting rules preserved.')
+            print('Office, home and DHA landing pages and legacy redirect live; hosting rules preserved.')
         except Exception as exc:
             print('Public route check failed:',type(exc).__name__,str(exc))
             ftp.storbinary('STOR .htaccess',io.BytesIO(original))
