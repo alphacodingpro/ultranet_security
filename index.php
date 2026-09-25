@@ -149,7 +149,7 @@ include __DIR__ . '/includes/header.php';
       <?php
       $services = [
         ['img'=>'service-home.jpg',   'tag'=>'HOME SECURITY',    'icon'=>'fa-house',        'title'=>'Home CCTV Installation',       'desc'=>'Plan entrances, night views, recording and mobile access for your home.', 'url'=>'/home-cctv-installation-karachi'],
-        ['img'=>'service-office.jpg', 'tag'=>'OFFICE SECURITY',  'icon'=>'fa-building',     'title'=>'Office & Commercial CCTV',     'desc'=>'Multi-camera systems for offices, plazas & warehouses with NVR/DVR and remote monitoring.'],
+        ['img'=>'service-office.jpg', 'tag'=>'OFFICE SECURITY',  'icon'=>'fa-building',     'title'=>'Office & Commercial CCTV',     'desc'=>'Plan entrances, staff access, recording and camera views across your office.', 'url'=>'/office-cctv-installation-karachi'],
         ['img'=>'service-shop.jpg',   'tag'=>'RETAIL SECURITY',  'icon'=>'fa-shop',         'title'=>'Shop & Retail Security',       'desc'=>'POS area monitoring, anti-theft cameras, entry/exit security for shops and retail stores.'],
         ['img'=>'service-amc.jpg',    'tag'=>'AMC SERVICE',      'icon'=>'fa-gear',         'title'=>'CCTV AMC & Maintenance',       'desc'=>'Annual Maintenance Contracts with regular checkups, DVR servicing and 24/7 emergency support.'],
         ['img'=>'service-ip.jpg',     'tag'=>'IP & WIRELESS',    'icon'=>'fa-wifi',         'title'=>'IP & Wireless Camera Systems', 'desc'=>'PoE IP cameras, wireless installation, PTZ cameras, AI cameras with face detection.'],
@@ -167,7 +167,7 @@ include __DIR__ . '/includes/header.php';
             <div class="svc-icon"><i class="fa-solid <?= h($svc['icon']) ?>"></i></div>
             <h3><?= h($svc['title']) ?></h3>
             <p><?= h($svc['desc']) ?></p>
-            <a href="<?= SITE_URL . h($svc['url'] ?? '/#contact') ?>" class="learn"><?= isset($svc['url']) ? 'Explore Home CCTV' : 'Get Free Quote' ?> <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="<?= SITE_URL . h($svc['url'] ?? '/#contact') ?>" class="learn"><?= isset($svc['url']) ? 'Explore the Guide' : 'Get Free Quote' ?> <i class="fa-solid fa-arrow-right"></i></a>
           </div>
         </article>
       </div>
