@@ -1,7 +1,7 @@
 name: SEO checks
 on:
   push:
-    branches: [main, codex/seo-audit, codex/dha-karachi, codex/sitewide-contact-popup, codex/home-cctv-guide, codex/bulk-product-delete, codex/office-cctv-guide]
+    branches: [main, codex/seo-audit, codex/dha-karachi, codex/sitewide-contact-popup, codex/home-cctv-guide, codex/bulk-product-delete, codex/office-cctv-guide, codex/shop-cctv-guide]
 permissions:
   contents: read
 jobs:
