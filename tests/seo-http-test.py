@@ -62,6 +62,19 @@ check('wa.me/923091243189' in t and '/calculator.php' in t,'Office survey and ca
 check(get(office+'.php')[1]==BASE+office and get(office+'/')[1]==BASE+office,'Office aliases redirect')
 s,u,h,t,p=get('/')
 check('href="'+BASE+office+'"' in t and 'Office &amp; Commercial CCTV' in t,'Homepage office service card links to guide')
+shop='/shop-cctv-installation-karachi'
+s,u,h,t,p=get(shop)
+check(s==200 and p.canonical==BASE+shop and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Shop CCTV canonical, indexability and one main/H1')
+check('Shop CCTV Installation' in t and 'id="retail-plan"' in t and 'id="retail-coverage"' in t and 'id="retail-system"' in t and 'id="retail-incident"' in t,'Retail service content is rendered')
+check(t.count('class="homecam-faq"')>=12 and 'Should a camera point directly at the card terminal?' in t and 'Does a CCTV system replace stock control or POS records?' in t,'Useful visible retail questions')
+check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Shop CCTV service schema')
+check('FAQPage' not in [x.get('@type') for x in p.schemas],'Avoid ineligible shop FAQ markup')
+check('home-cctv.css' in t and t.find('home-cctv.css')<t.find('</head>') and 'service-shop' in t,'Shop CSS and existing illustration')
+check('wa.me/923091243189' in t and '/calculator.php' in t and '/products.php' in t,'Shop contact, calculator and product actions')
+check(get(shop+'.php')[1]==BASE+shop and get(shop+'/')[1]==BASE+shop,'Shop aliases redirect')
+s,u,h,t,p=get('/')
+check('href="'+BASE+shop+'"' in t and 'Shop &amp; Retail CCTV' in t,'Homepage shop service card links to guide')
+check(get('/office-cctv-installation-karachi')[4].h1==1,'Office CCTV page still works')
 check(get('/home-cctv-installation-karachi')[4].h1==1,'Home CCTV page still works')
 dha='/cctv-camera-installation-dha-karachi'
 s,u,h,t,p=get(dha);check(s==200 and p.canonical==BASE+dha and p.robots=='index, follow' and p.h1==1,'DHA canonical, indexability and H1')
@@ -71,7 +84,7 @@ check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, P
 check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
 check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+home in urls and BASE+office in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
