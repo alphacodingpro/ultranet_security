@@ -4,9 +4,9 @@
 <!-- CTA SECTION -->
 <section class="cta-sec" aria-label="Call to action">
   <div class="container text-center position-relative" style="z-index:1">
-    <p class="section-tag justify-content-center" style="color:rgba(230,57,70,.7)">Free No-Obligation Survey</p>
-    <h2>SECURE YOUR PROPERTY TODAY<br>IN <span style="color:var(--accent)">KARACHI</span></h2>
-    <p>Call or WhatsApp now for a free site survey. Same day installation available!</p>
+    <p class="section-tag justify-content-center" style="color:rgba(230,57,70,.7)">Discuss Your Requirements</p>
+    <h2>PLAN OR REPAIR YOUR CCTV SYSTEM<br>IN <span style="color:var(--accent)">KARACHI</span></h2>
+    <p>Call or WhatsApp with your property details, existing equipment or the fault you need checked.</p>
     <div class="d-flex gap-3 justify-content-center flex-wrap">
       <a href="tel:+923091243189" class="btn-red"><i class="fa-solid fa-phone"></i> Call: 0309-1243189</a>
       <a href="https://wa.me/923091243189" class="btn-ghost"><i class="fa-brands fa-whatsapp"></i> WhatsApp Now</a>
@@ -23,7 +23,7 @@
           <div class="brand-icon"><i class="fa-solid fa-camera"></i></div>
           UltraNet <span>Security</span>
         </div>
-        <p>Karachi's most trusted CCTV installation company. Protecting homes, offices and businesses with genuine, professional security solutions since 2014.</p>
+        <p>CCTV system planning, installation and maintenance information for homes, offices and businesses in Karachi.</p>
         <p class="mt-2"><i class="fa-solid fa-location-dot me-2" style="color:var(--accent)"></i>House 239, Manzoor Colony, Hill Town, Karachi 75460</p>
         <div class="social-icons">
           <a href="https://wa.me/923091243189" class="social-icon" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
@@ -35,7 +35,7 @@
           <li><a href="<?= SITE_URL ?>/home-cctv-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Home CCTV</a></li>
           <li><a href="<?= SITE_URL ?>/office-cctv-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Office CCTV</a></li>
           <li><a href="<?= SITE_URL ?>/shop-cctv-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Shop CCTV</a></li>
-          <li><a href="<?= SITE_URL ?>/#services"><i class="fa-solid fa-chevron-right"></i> AMC Services</a></li>
+          <li><a href="<?= SITE_URL ?>/cctv-maintenance-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Maintenance</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-camera-installation-dha-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV in DHA Karachi</a></li>
         </ul>
       </div>
