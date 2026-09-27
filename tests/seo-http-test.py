@@ -74,6 +74,17 @@ check('wa.me/923091243189' in t and '/calculator.php' in t and '/products.php' i
 check(get(shop+'.php')[1]==BASE+shop and get(shop+'/')[1]==BASE+shop,'Shop aliases redirect')
 s,u,h,t,p=get('/')
 check('href="'+BASE+shop+'"' in t and 'Shop &amp; Retail CCTV' in t,'Homepage shop service card links to guide')
+maintenance='/cctv-maintenance-karachi'
+s,u,h,t,p=get(maintenance)
+check(s==200 and p.canonical==BASE+maintenance and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Maintenance canonical, indexability and one main/H1')
+check('CCTV Maintenance' in t and 'id="maintenance-audit"' in t and 'id="maintenance-checks"' in t and 'id="maintenance-faults"' in t and 'id="maintenance-handover"' in t,'Maintenance service content is rendered')
+check(t.count('class="homecam-faq"')>=12 and 'What does DVR or NVR beeping mean?' in t and 'Should firmware be updated during every maintenance visit?' in t,'Useful visible maintenance questions')
+check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Maintenance Service schema')
+check('FAQPage' not in [x.get('@type') for x in p.schemas],'Avoid ineligible maintenance FAQ markup')
+check('home-cctv.css' in t and t.find('home-cctv.css')<t.find('</head>') and 'service-amc' in t,'Maintenance CSS and existing illustration')
+check('wa.me/923091243189' in t and '/office-cctv-installation-karachi' in t and '/shop-cctv-installation-karachi' in t and '/home-cctv-installation-karachi' in t,'Maintenance contact and internal links')
+check(get(maintenance+'.php')[1]==BASE+maintenance and get(maintenance+'/')[1]==BASE+maintenance,'Maintenance aliases redirect')
+check('href="'+BASE+maintenance+'"' in get(shop)[3],'Existing shop guide links to maintenance')
 check(get('/office-cctv-installation-karachi')[4].h1==1,'Office CCTV page still works')
 check(get('/home-cctv-installation-karachi')[4].h1==1,'Home CCTV page still works')
 dha='/cctv-camera-installation-dha-karachi'
@@ -84,7 +95,7 @@ check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, P
 check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
 check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
