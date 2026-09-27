@@ -6,6 +6,7 @@ if(in_array($path,['/cctv-camera-installation-dha-karachi','/cctv-camera-install
 if(in_array($path,['/home-cctv-installation-karachi','/home-cctv-installation-karachi/'],true)){require dirname(__DIR__).'/home-cctv-installation-karachi.php';return true;}
 if(in_array($path,['/office-cctv-installation-karachi','/office-cctv-installation-karachi/'],true)){require dirname(__DIR__).'/office-cctv-installation-karachi.php';return true;}
 if(in_array($path,['/shop-cctv-installation-karachi','/shop-cctv-installation-karachi/'],true)){require dirname(__DIR__).'/shop-cctv-installation-karachi.php';return true;}
+if(in_array($path,['/cctv-maintenance-karachi','/cctv-maintenance-karachi/'],true)){require dirname(__DIR__).'/cctv-maintenance-karachi.php';return true;}
 if($path==='/sitemap.xml'){require dirname(__DIR__).'/sitemap.php';return true;}
 if($path==='/robots.txt'){require dirname(__DIR__).'/robots.php';return true;}
 if($path==='/'||is_file(dirname(__DIR__).$path)) return false;
