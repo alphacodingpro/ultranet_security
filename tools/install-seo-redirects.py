@@ -45,6 +45,13 @@ RewriteRule ^cctv-maintenance-karachi/?$ cctv-maintenance-karachi.php [END]
 </IfModule>
 # END UltraNet CCTV maintenance landing page
 '''
+IP_CAMERA_BLOCK=b'''# BEGIN UltraNet IP camera landing page
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^ip-camera-installation-karachi/?$ ip-camera-installation-karachi.php [END]
+</IfModule>
+# END UltraNet IP camera landing page
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -53,6 +60,7 @@ with ftplib.FTP(timeout=30) as ftp:
     ftp.retrbinary('RETR .htaccess',old.write)
     original=old.getvalue()
     additions=b''
+    if IP_CAMERA_BLOCK not in original: additions+=IP_CAMERA_BLOCK+b'\n'
     if MAINTENANCE_BLOCK not in original: additions+=MAINTENANCE_BLOCK+b'\n'
     if SHOP_BLOCK not in original: additions+=SHOP_BLOCK+b'\n'
     if OFFICE_BLOCK not in original: additions+=OFFICE_BLOCK+b'\n'
@@ -65,6 +73,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+original))
         try:
             for path,final in [
+                ('/ip-camera-installation-karachi','/ip-camera-installation-karachi'),
+                ('/ip-camera-installation-karachi.php','/ip-camera-installation-karachi'),
                 ('/cctv-maintenance-karachi','/cctv-maintenance-karachi'),
                 ('/cctv-maintenance-karachi.php','/cctv-maintenance-karachi'),
                 ('/shop-cctv-installation-karachi','/shop-cctv-installation-karachi'),
@@ -89,7 +99,7 @@ with ftplib.FTP(timeout=30) as ftp:
                     print('Public route check:',path,response.status,response.geturl())
                     if response.status!=200 or response.geturl()!='https://ultranetsecurity.com'+final:
                         raise RuntimeError('Public route verification failed')
-            print('Maintenance, shop, office, home and DHA landing pages and legacy redirect live; hosting rules preserved.')
+            print('IP camera, maintenance, shop, office, home and DHA landing pages and legacy redirect live; hosting rules preserved.')
         except Exception as exc:
             print('Public route check failed:',type(exc).__name__,str(exc))
             ftp.storbinary('STOR .htaccess',io.BytesIO(original))
