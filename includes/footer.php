@@ -37,6 +37,7 @@
           <li><a href="<?= SITE_URL ?>/shop-cctv-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Shop CCTV</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-maintenance-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Maintenance</a></li>
           <li><a href="<?= SITE_URL ?>/ip-camera-installation-karachi"><i class="fa-solid fa-chevron-right"></i> IP &amp; Wireless CCTV</a></li>
+          <li><a href="<?= SITE_URL ?>/access-control-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Access Control</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-camera-installation-dha-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV in DHA Karachi</a></li>
         </ul>
       </div>
