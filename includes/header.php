@@ -139,21 +139,18 @@ $searchQuery = h(queryText('q'));
 </div>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+<nav class="navbar navbar-expand-xl" aria-label="Main navigation">
   <div class="container">
     <a class="navbar-brand" href="<?= SITE_URL ?>/">
       <div class="brand-icon"><i class="fa-solid fa-camera"></i></div>
       UltraNet <span>Security</span>
     </a>
-    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-      <i class="fa-solid fa-moon" aria-hidden="true"></i>
-      <span class="theme-toggle-label">Dark mode</span>
-    </button>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
+    <a class="mobile-call d-xl-none" href="tel:+923091243189" aria-label="Call UltraNet Security"><i class="fa-solid fa-phone" aria-hidden="true"></i></a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fa-solid fa-bars fs-4"></i>
     </button>
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto align-items-lg-center">
+      <ul class="navbar-nav me-auto align-items-xl-center">
         <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/">Home</a></li>
         <!-- Products dropdown -->
         <li class="nav-item dropdown">
@@ -176,7 +173,7 @@ $searchQuery = h(queryText('q'));
         <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/#contact">Contact</a></li>
       </ul>
       <!-- Search form -->
-      <form class="d-flex me-2" action="<?= SITE_URL ?>/search.php" method="GET" role="search">
+      <form class="nav-search-form d-flex" action="<?= SITE_URL ?>/search.php" method="GET" role="search">
         <div class="input-group nav-search">
           <input type="text" name="q" class="form-control" placeholder="Search cameras, NVR, DVR…"
                  value="<?= $searchQuery ?>" aria-label="Search products">
@@ -185,7 +182,7 @@ $searchQuery = h(queryText('q'));
           </button>
         </div>
       </form>
-      <a class="nav-link cta-btn" href="tel:+923091243189">
+      <a class="nav-link cta-btn d-none d-xl-inline-flex" href="tel:+923091243189">
         <i class="fa-solid fa-phone me-1"></i>Call Now
       </a>
     </div>
