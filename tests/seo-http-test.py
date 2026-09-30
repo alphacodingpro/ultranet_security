@@ -107,6 +107,17 @@ check('home-cctv.css' in t and t.find('home-cctv.css')<t.find('</head>') and 'se
 check('wa.me/923091243189' in t and '/office-cctv-installation-karachi' in t and '/ip-camera-installation-karachi' in t and '/cctv-maintenance-karachi' in t,'Access control contact and useful internal links')
 check(get(access+'.php')[1]==BASE+access and get(access+'/')[1]==BASE+access,'Access control aliases redirect')
 check('href="'+BASE+access+'"' in get(ip)[3],'Existing IP camera guide links to access control')
+intercom='/video-door-intercom-installation-karachi'
+s,u,h,t,p=get(intercom)
+check(s==200 and p.canonical==BASE+intercom and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Video intercom canonical, indexability and one main/H1')
+check('VIDEO DOOR INTERCOM' in t and 'id="intercom-plan"' in t and 'id="intercom-wiring"' in t and 'id="intercom-system"' in t and 'id="intercom-handover"' in t,'Video intercom service content is rendered')
+check(t.count('class="homecam-faq"')>=12 and 'Should I choose an analogue or IP video intercom?' in t and 'Can I answer the intercom on my mobile phone?' in t,'Useful visible video intercom questions')
+check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Video intercom Service schema')
+check('FAQPage' not in [x.get('@type') for x in p.schemas],'Avoid ineligible video intercom FAQ markup')
+check('home-cctv.css' in t and t.find('home-cctv.css')<t.find('</head>') and 'service-access' in t,'Video intercom CSS and existing illustration')
+check('wa.me/923091243189' in t and '/access-control-installation-karachi' in t and '/ip-camera-installation-karachi' in t and '/home-cctv-installation-karachi' in t,'Video intercom contact and useful internal links')
+check(get(intercom+'.php')[1]==BASE+intercom and get(intercom+'/')[1]==BASE+intercom,'Video intercom aliases redirect')
+check('href="'+BASE+intercom+'"' in get(access)[3],'Existing access control guide links to video intercom')
 check(get('/office-cctv-installation-karachi')[4].h1==1,'Office CCTV page still works')
 check(get('/home-cctv-installation-karachi')[4].h1==1,'Home CCTV page still works')
 dha='/cctv-camera-installation-dha-karachi'
@@ -117,7 +128,7 @@ check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, P
 check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
 check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
