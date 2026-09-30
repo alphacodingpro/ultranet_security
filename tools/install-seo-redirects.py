@@ -59,6 +59,13 @@ RewriteRule ^access-control-installation-karachi/?$ access-control-installation-
 </IfModule>
 # END UltraNet access control landing page
 '''
+INTERCOM_BLOCK=b'''# BEGIN UltraNet video door intercom landing page
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^video-door-intercom-installation-karachi/?$ video-door-intercom-installation-karachi.php [END]
+</IfModule>
+# END UltraNet video door intercom landing page
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -67,6 +74,7 @@ with ftplib.FTP(timeout=30) as ftp:
     ftp.retrbinary('RETR .htaccess',old.write)
     original=old.getvalue()
     additions=b''
+    if INTERCOM_BLOCK not in original: additions+=INTERCOM_BLOCK+b'\n'
     if ACCESS_CONTROL_BLOCK not in original: additions+=ACCESS_CONTROL_BLOCK+b'\n'
     if IP_CAMERA_BLOCK not in original: additions+=IP_CAMERA_BLOCK+b'\n'
     if MAINTENANCE_BLOCK not in original: additions+=MAINTENANCE_BLOCK+b'\n'
@@ -81,6 +89,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+original))
         try:
             for path,final in [
+                ('/video-door-intercom-installation-karachi','/video-door-intercom-installation-karachi'),
+                ('/video-door-intercom-installation-karachi.php','/video-door-intercom-installation-karachi'),
                 ('/access-control-installation-karachi','/access-control-installation-karachi'),
                 ('/access-control-installation-karachi.php','/access-control-installation-karachi'),
                 ('/ip-camera-installation-karachi','/ip-camera-installation-karachi'),
@@ -109,7 +119,7 @@ with ftplib.FTP(timeout=30) as ftp:
                     print('Public route check:',path,response.status,response.geturl())
                     if response.status!=200 or response.geturl()!='https://ultranetsecurity.com'+final:
                         raise RuntimeError('Public route verification failed')
-            print('Access control, IP camera, maintenance, shop, office, home and DHA landing pages and legacy redirect live; hosting rules preserved.')
+            print('Video intercom, access control, IP camera, maintenance, shop, office, home and DHA landing pages and legacy redirect live; hosting rules preserved.')
         except Exception as exc:
             print('Public route check failed:',type(exc).__name__,str(exc))
             ftp.storbinary('STOR .htaccess',io.BytesIO(original))
