@@ -27,6 +27,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  /* Keep Bootstrap collapse state and accessibility attributes in sync. */
+  const publicMenu = document.getElementById('navMenu');
+  const closePublicMenu = () => {
+    if (publicMenu && publicMenu.classList.contains('show') && window.bootstrap) {
+      window.bootstrap.Collapse.getOrCreateInstance(publicMenu, {toggle:false}).hide();
+    }
+  };
+  if (publicMenu) {
+    publicMenu.querySelectorAll('a:not([data-bs-toggle])').forEach(link => link.addEventListener('click', closePublicMenu));
+    publicMenu.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closePublicMenu();
+        document.querySelector('[aria-controls="navMenu"]').focus();
+      }
+    });
+  }
+
   /* ── SCROLL REVEAL ── */
   const revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length && 'IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -83,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Close mobile nav
         const navCollapse = document.querySelector('.navbar-collapse');
         if (navCollapse && navCollapse.classList.contains('show')) {
-          navCollapse.classList.remove('show');
+          closePublicMenu();
         }
       }
     });
