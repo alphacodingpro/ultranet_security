@@ -45,6 +45,7 @@
       <div class="col-sm-6 col-lg-2">
         <div class="footer-heading">Products</div>
         <ul class="footer-links">
+          <li><a href="<?= SITE_URL ?>/imou-wireless-cameras-karachi"><i class="fa-solid fa-chevron-right"></i> Imou Camera Guide</a></li>
           <?php
           $footerCats = getFeaturedCategories();
           foreach ($footerCats as $fc): ?>
