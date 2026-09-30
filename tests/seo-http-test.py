@@ -123,7 +123,7 @@ check(get('/home-cctv-installation-karachi')[4].h1==1,'Home CCTV page still work
 imou='/imou-wireless-cameras-karachi'
 s,u,h,t,p=get(imou)
 check(s==200 and p.canonical==BASE+imou and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Imou canonical and crawlable page')
-check(t.count('class="imou-model')==6 and t.count('static-website.imou.com/')>=6,'Six illustrated Imou models')
+check(t.count('class="imou-product"')==6 and t.count('static-website.imou.com/')>=6,'Six illustrated Imou models')
 check(all(name in t for name in ['Ranger RC-R1','Ranger 2 Dual','Ranger 2 Pro 4K','Cruiser 2','Cruiser Dual 2','N110W / N118W']),'Named camera and recorder range')
 check(all('id="'+section+'"' in t for section in ['imou-models','imou-selection','imou-recording','imou-installation','imou-questions']),'Practical guide sections')
 check('4K HDMI' in t and 'power' in t and t.count('class="homecam-faq"')>=8,'Compatibility and power guidance')
