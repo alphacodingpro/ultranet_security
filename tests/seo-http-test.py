@@ -131,6 +131,15 @@ items=next(x for x in p.schemas if x.get('@type')=='ItemList')['itemListElement'
 check(len(items)==6 and all(x['item']['image'].startswith('https://static-website.imou.com/') and 'offers' not in x['item'] for x in items),'Product images without invented offers')
 check(get(imou+'.php')[1]==BASE+imou and get(imou+'/')[1]==BASE+imou,'Imou aliases redirect')
 check('href="'+BASE+imou+'"' in get(ip)[3],'Imou guide discoverable internally')
+storage='/cctv-storage-upgrade-karachi'
+s,u,h,t,p=get(storage)
+check(s==200 and p.canonical==BASE+storage and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Storage canonical and crawlable layout')
+check(all('id="'+x+'"' in t for x in ['storage-assessment','storage-calculation','storage-upgrade','storage-handover','storage-questions']),'Storage planning sections')
+check('172.8GB' in t and '2,419.2GB' in t and 'initialisation' in t and 'old disk' in t,'Retention calculation and preservation guidance')
+check(t.count('class="homecam-faq"')==10 and 'recovery of overwritten' in t,'Useful storage questions and limits')
+check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Storage Service schema')
+check(get(storage+'.php')[1]==BASE+storage and get(storage+'/')[1]==BASE+storage,'Storage aliases redirect')
+check('href="'+BASE+storage+'"' in get(maintenance)[3],'Storage inbound link')
 dha='/cctv-camera-installation-dha-karachi'
 s,u,h,t,p=get(dha);check(s==200 and p.canonical==BASE+dha and p.robots=='index, follow' and p.h1==1,'DHA canonical, indexability and H1')
 check('Phases 1–8' in t and all(('Phase '+str(i)) in t for i in range(1,9)),'DHA phases 1–8')
@@ -139,7 +148,7 @@ check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, P
 check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
 check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+storage in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
