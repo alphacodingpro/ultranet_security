@@ -73,6 +73,13 @@ RewriteRule ^imou-wireless-cameras-karachi/?$ imou-wireless-cameras-karachi.php 
 </IfModule>
 # END UltraNet Imou wireless guide
 '''
+STORAGE_BLOCK=b'''# BEGIN UltraNet storage upgrade guide
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^cctv-storage-upgrade-karachi/?$ cctv-storage-upgrade-karachi.php [END]
+</IfModule>
+# END UltraNet storage upgrade guide
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -81,6 +88,7 @@ with ftplib.FTP(timeout=30) as ftp:
     ftp.retrbinary('RETR .htaccess',old.write)
     original=old.getvalue()
     additions=b''
+    if STORAGE_BLOCK not in original: additions+=STORAGE_BLOCK+b'\n'
     if IMOU_BLOCK not in original: additions+=IMOU_BLOCK+b'\n'
     if INTERCOM_BLOCK not in original: additions+=INTERCOM_BLOCK+b'\n'
     if ACCESS_CONTROL_BLOCK not in original: additions+=ACCESS_CONTROL_BLOCK+b'\n'
@@ -97,6 +105,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+original))
         try:
             for path,final in [
+                ('/cctv-storage-upgrade-karachi','/cctv-storage-upgrade-karachi'),
+                ('/cctv-storage-upgrade-karachi.php','/cctv-storage-upgrade-karachi'),
                 ('/imou-wireless-cameras-karachi','/imou-wireless-cameras-karachi'),
                 ('/imou-wireless-cameras-karachi.php','/imou-wireless-cameras-karachi'),
                 ('/video-door-intercom-installation-karachi','/video-door-intercom-installation-karachi'),
