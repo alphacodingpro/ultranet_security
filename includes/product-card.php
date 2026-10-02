@@ -35,7 +35,7 @@
         <?php endif; ?>
       </div>
       <a href="https://wa.me/923091243189?text=<?= urlencode('Hi, I am interested in: '.$p['name'].' ('.productPriceLabel($p['price']).')') ?>"
-         class="prod-wa-btn" target="_blank" aria-label="Enquire on WhatsApp">
+         class="prod-wa-btn" target="_blank" aria-label="Enquire about <?= h($p['name']) ?> on WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
       </a>
     </div>
