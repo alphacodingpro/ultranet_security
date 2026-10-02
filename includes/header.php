@@ -168,6 +168,7 @@ $searchQuery = h(queryText('q'));
           </ul>
         </li>
         <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/packages/"><i class="fa-solid fa-box-open me-1"></i>Packages</a></li>
         <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/calculator.php"><i class="fa-solid fa-calculator me-1"></i>Calculator</a></li>
         <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/#areas">Areas</a></li>
         <li class="nav-item"><a class="nav-link" href="<?= SITE_URL ?>/#contact">Contact</a></li>
