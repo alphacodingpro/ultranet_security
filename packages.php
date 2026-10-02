@@ -35,9 +35,9 @@ include __DIR__ . '/includes/header.php';
   <div class="container">
     <div class="row align-items-center g-4">
       <div class="col-lg-8">
-        <span class="package-eyebrow"><i class="fa-solid fa-location-dot"></i> Karachi installation packages</span>
-        <h1>CCTV Camera Packages<br><span>For Every Property</span></h1>
-        <p>Home, shop ya office ke liye cameras, recorder, storage aur installation ko ek clear package mein compare karein.</p>
+        <span class="package-eyebrow"><i class="fa-solid fa-location-dot"></i> CCTV packages for Karachi</span>
+        <h1>Complete CCTV Packages<br><span>For Home & Business</span></h1>
+        <p>Cameras, recorder, surveillance storage, mobile viewing aur installation support—sab details ek jagah compare karein.</p>
         <div class="d-flex flex-wrap gap-3">
           <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Assalam-o-Alaikum, mujhe Karachi mein CCTV package ka quote chahiye.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Quote</a>
           <a class="btn-package-outline" href="tel:+923091243189"><i class="fa-solid fa-phone"></i> 0309-1243189</a>
@@ -45,11 +45,11 @@ include __DIR__ . '/includes/header.php';
       </div>
       <div class="col-lg-4">
         <div class="package-trust-card">
-          <strong>What you get</strong>
-          <span><i class="fa-solid fa-circle-check"></i> Karachi site guidance</span>
-          <span><i class="fa-solid fa-circle-check"></i> Installation options</span>
-          <span><i class="fa-solid fa-circle-check"></i> Mobile viewing setup</span>
-          <span><i class="fa-solid fa-circle-check"></i> After-sales support</span>
+          <strong>Every package includes</strong>
+          <span><i class="fa-solid fa-circle-check"></i> Requirement assessment</span>
+          <span><i class="fa-solid fa-circle-check"></i> Professional installation option</span>
+          <span><i class="fa-solid fa-circle-check"></i> Mobile viewing configuration</span>
+          <span><i class="fa-solid fa-circle-check"></i> Karachi after-sales support</span>
         </div>
       </div>
     </div>
@@ -58,10 +58,10 @@ include __DIR__ . '/includes/header.php';
 
 <section class="package-list-section">
   <div class="container">
-    <div class="section-title text-center package-section-title">
-      <span>Choose your setup</span>
-      <h2>Available CCTV Packages</h2>
-      <p>Final price cable length, camera model, storage aur site conditions ke mutabiq confirm hoti hai.</p>
+    <div class="text-center package-section-title">
+      <span class="package-section-kicker">Compare your options</span>
+      <h2>Choose the Right CCTV Package</h2>
+      <p>Final quotation camera model, cable length, recording storage aur site conditions ke mutabiq confirm hoti hai.</p>
     </div>
 
     <?php if ($packages): ?>
@@ -105,8 +105,8 @@ include __DIR__ . '/includes/header.php';
     <?php else: ?>
     <div class="package-empty">
       <i class="fa-solid fa-sliders"></i>
-      <h2>Custom package banwayein</h2>
-      <p>Camera quantity, recording days aur property size batayein—hum Karachi ke liye suitable package aur current price bhej denge.</p>
+      <h2>Need a different camera setup?</h2>
+      <p>Camera quantity, recording days aur property size share karein. Hum suitable custom package aur current Karachi price bhej denge.</p>
       <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Assalam-o-Alaikum, mujhe custom CCTV package ka quote chahiye.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp</a>
     </div>
     <?php endif; ?>
@@ -116,7 +116,7 @@ include __DIR__ . '/includes/header.php';
 <section class="package-notes">
   <div class="container">
     <div class="row g-4">
-      <div class="col-lg-7"><h2>Package price mein kya change ho sakta hai?</h2><p>Cable route, camera model, night-vision range, hard-drive capacity, height aur civil work final quotation ko affect karte hain. Site details share karne ke baad exact written quote confirm kiya jata hai.</p></div>
+      <div class="col-lg-7"><span class="package-section-kicker">Transparent quotation</span><h2>Final price kin cheezon par depend karti hai?</h2><p>Cable route, camera model, night-vision range, hard-drive capacity, installation height aur civil work final quotation ko affect karte hain. Site details milne ke baad exact written quote confirm kiya jata hai.</p></div>
       <div class="col-lg-5"><div class="package-note-box"><i class="fa-solid fa-calculator"></i><div><strong>Need a custom calculation?</strong><p>Apni camera count aur recording requirement select karein.</p><a href="<?= SITE_URL ?>/calculator.php">Open CCTV Calculator <i class="fa-solid fa-arrow-right"></i></a></div></div></div>
     </div>
   </div>
