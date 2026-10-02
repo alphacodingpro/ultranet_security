@@ -59,7 +59,7 @@ jobs:
           **/.DS_Store
           seo-live-audit.json
 
-    - name: Preserve hosting rules and redirect the legacy packages page
+    - name: Preserve hosting rules and install public page routes
       env:
         FTP_SERVER: ${{ secrets.FTP_SERVER }}
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
