@@ -94,6 +94,23 @@ RewriteRule ^cctv-power-backup-ups-karachi/?$ cctv-power-backup-ups-karachi.php 
 </IfModule>
 # END UltraNet CCTV power backup guide
 '''
+CACHE_BLOCK=b'''# BEGIN UltraNet static asset caching
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType text/css "access plus 1 year"
+ExpiresByType application/javascript "access plus 1 year"
+ExpiresByType image/webp "access plus 1 year"
+ExpiresByType image/jpeg "access plus 1 year"
+ExpiresByType image/png "access plus 1 year"
+ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+<IfModule mod_headers.c>
+<FilesMatch "\\.(?:css|js|webp|jpg|jpeg|png|woff2)$">
+Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+</IfModule>
+# END UltraNet static asset caching
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -103,6 +120,7 @@ with ftplib.FTP(timeout=30) as ftp:
     original=old.getvalue()
     working=original.replace(OLD_BLOCK, b'')
     additions=b''
+    if CACHE_BLOCK not in working: additions+=CACHE_BLOCK+b'\n'
     if POWER_BACKUP_BLOCK not in original: additions+=POWER_BACKUP_BLOCK+b'\n'
     if STORAGE_BLOCK not in original: additions+=STORAGE_BLOCK+b'\n'
     if IMOU_BLOCK not in original: additions+=IMOU_BLOCK+b'\n'

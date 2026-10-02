@@ -37,6 +37,8 @@ jobs:
           https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css \
           --output assets/vendor/fontawesome.min.css
         sed -i 's/font-display:block/font-display:swap/g' assets/vendor/fontawesome.min.css
+        cat assets/vendor/bootstrap.min.css assets/vendor/fontawesome.min.css assets/css/style.css \
+          > assets/vendor/site.bundle.css
         for font in fa-solid-900.woff2 fa-regular-400.woff2 fa-brands-400.woff2; do
           curl --fail --silent --show-error --location --retry 3 \
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/$font" \

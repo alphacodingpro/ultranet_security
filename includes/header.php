@@ -70,13 +70,11 @@ $searchQuery = h(queryText('q'));
   <link rel="preconnect" href="https://fonts.googleapis.com">
 
   <!-- Bootstrap + FA + Fonts -->
-  <link rel="stylesheet" href="<?= ASSETS_URL ?>/vendor/bootstrap.min.css">
-  <link rel="stylesheet" href="<?= ASSETS_URL ?>/vendor/fontawesome.min.css">
+  <link rel="stylesheet" href="<?= ASSETS_URL ?>/vendor/site.bundle.css?v=<?= filemtime(__DIR__.'/../assets/vendor/site.bundle.css') ?>">
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap"></noscript>
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/style.css?v=<?= filemtime(__DIR__.'/../assets/css/style.css') ?>">
+  <!-- Page-specific CSS -->
   <?php foreach ($pageStyles as $styleFile): ?>
   <?php if (is_string($styleFile) && preg_match('/^[a-z0-9-]+\.css$/D', $styleFile) && is_file(__DIR__.'/../assets/css/'.$styleFile)): ?>
   <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/<?= h($styleFile) ?>?v=<?= filemtime(__DIR__.'/../assets/css/'.$styleFile) ?>">
