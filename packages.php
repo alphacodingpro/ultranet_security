@@ -37,9 +37,9 @@ include __DIR__ . '/includes/header.php';
       <div class="col-lg-8">
         <span class="package-eyebrow"><i class="fa-solid fa-location-dot"></i> CCTV packages for Karachi</span>
         <h1>Complete CCTV Packages<br><span>For Home & Business</span></h1>
-        <p>Cameras, recorder, surveillance storage, mobile viewing aur installation support—sab details ek jagah compare karein.</p>
+        <p>Compare cameras, recorders, surveillance storage, mobile viewing and installation support in one place.</p>
         <div class="d-flex flex-wrap gap-3">
-          <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Assalam-o-Alaikum, mujhe Karachi mein CCTV package ka quote chahiye.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Quote</a>
+          <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Hello UltraNet Security, I would like a quote for a CCTV package in Karachi.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Quote</a>
           <a class="btn-package-outline" href="tel:+923091243189"><i class="fa-solid fa-phone"></i> 0309-1243189</a>
         </div>
       </div>
@@ -61,13 +61,13 @@ include __DIR__ . '/includes/header.php';
     <div class="text-center package-section-title">
       <span class="package-section-kicker">Compare your options</span>
       <h2>Choose the Right CCTV Package</h2>
-      <p>Final quotation camera model, cable length, recording storage aur site conditions ke mutabiq confirm hoti hai.</p>
+      <p>Your final quotation is confirmed according to the camera model, cable length, recording storage and site conditions.</p>
     </div>
 
     <?php if ($packages): ?>
     <div class="row g-4 justify-content-center">
       <?php foreach ($packages as $package):
-        $message = 'Assalam-o-Alaikum, mujhe "' . $package['name'] . '" package ka quote chahiye. Location: Karachi.';
+        $message = 'Hello UltraNet Security, I would like a quote for the "' . $package['name'] . '" package. Location: Karachi.';
       ?>
       <div class="col-md-6 col-xl-4">
         <article class="package-card <?= !empty($package['featured']) ? 'featured' : '' ?>">
@@ -106,8 +106,8 @@ include __DIR__ . '/includes/header.php';
     <div class="package-empty">
       <i class="fa-solid fa-sliders"></i>
       <h2>Need a different camera setup?</h2>
-      <p>Camera quantity, recording days aur property size share karein. Hum suitable custom package aur current Karachi price bhej denge.</p>
-      <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Assalam-o-Alaikum, mujhe custom CCTV package ka quote chahiye.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp</a>
+      <p>Share the number of cameras, required recording days and property size. We will recommend a suitable custom package and provide the current Karachi price.</p>
+      <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Hello UltraNet Security, I would like a quote for a custom CCTV package.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp</a>
     </div>
     <?php endif; ?>
   </div>
@@ -116,8 +116,8 @@ include __DIR__ . '/includes/header.php';
 <section class="package-notes">
   <div class="container">
     <div class="row g-4">
-      <div class="col-lg-7"><span class="package-section-kicker">Transparent quotation</span><h2>Final price kin cheezon par depend karti hai?</h2><p>Cable route, camera model, night-vision range, hard-drive capacity, installation height aur civil work final quotation ko affect karte hain. Site details milne ke baad exact written quote confirm kiya jata hai.</p></div>
-      <div class="col-lg-5"><div class="package-note-box"><i class="fa-solid fa-calculator"></i><div><strong>Need a custom calculation?</strong><p>Apni camera count aur recording requirement select karein.</p><a href="<?= SITE_URL ?>/calculator.php">Open CCTV Calculator <i class="fa-solid fa-arrow-right"></i></a></div></div></div>
+      <div class="col-lg-7"><span class="package-section-kicker">Transparent quotation</span><h2>What determines the final price?</h2><p>The cable route, camera model, night-vision range, hard-drive capacity, installation height and any civil work affect the final quotation. We confirm an exact written quote after reviewing the site details.</p></div>
+      <div class="col-lg-5"><div class="package-note-box"><i class="fa-solid fa-calculator"></i><div><strong>Need a custom calculation?</strong><p>Select your camera count and recording requirements.</p><a href="<?= SITE_URL ?>/calculator.php">Open CCTV Calculator <i class="fa-solid fa-arrow-right"></i></a></div></div></div>
     </div>
   </div>
 </section>
