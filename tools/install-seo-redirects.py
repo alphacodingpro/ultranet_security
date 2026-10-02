@@ -3,12 +3,19 @@ Uses the existing deployment FTP account. Never reads .env or prints credentials
 Restores the original bytes if the public redirect check fails.
 """
 import ftplib, io, os, time, http.client, urllib.request, urllib.error
-BLOCK=b'''# BEGIN UltraNet legacy package redirect
+OLD_BLOCK=b'''# BEGIN UltraNet legacy package redirect
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteRule ^packages/?$ /calculator.php [R=301,L]
 </IfModule>
 # END UltraNet legacy package redirect
+'''
+BLOCK=b'''# BEGIN UltraNet packages page
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^packages/?$ packages.php [END]
+</IfModule>
+# END UltraNet packages page
 '''
 DHA_BLOCK=b'''# BEGIN UltraNet DHA landing page
 <IfModule mod_rewrite.c>
@@ -94,6 +101,7 @@ with ftplib.FTP(timeout=30) as ftp:
     # Refuse to create a new per-directory config that might override inherited rules.
     ftp.retrbinary('RETR .htaccess',old.write)
     original=old.getvalue()
+    working=original.replace(OLD_BLOCK, b'')
     additions=b''
     if POWER_BACKUP_BLOCK not in original: additions+=POWER_BACKUP_BLOCK+b'\n'
     if STORAGE_BLOCK not in original: additions+=STORAGE_BLOCK+b'\n'
@@ -106,11 +114,11 @@ with ftplib.FTP(timeout=30) as ftp:
     if OFFICE_BLOCK not in original: additions+=OFFICE_BLOCK+b'\n'
     if HOME_BLOCK not in original: additions+=HOME_BLOCK+b'\n'
     if DHA_BLOCK not in original: additions+=DHA_BLOCK+b'\n'
-    if BLOCK not in original: additions+=BLOCK+b'\n'
+    if BLOCK not in working: additions+=BLOCK+b'\n'
     if not additions:
         print('Public redirects already installed; hosting rules preserved.')
     else:
-        ftp.storbinary('STOR .htaccess',io.BytesIO(additions+original))
+        ftp.storbinary('STOR .htaccess',io.BytesIO(additions+working))
         try:
             for path,final in [
                 ('/cctv-power-backup-ups-karachi','/cctv-power-backup-ups-karachi'),
@@ -135,7 +143,7 @@ with ftplib.FTP(timeout=30) as ftp:
                 ('/home-cctv-installation-karachi.php','/home-cctv-installation-karachi'),
                 ('/cctv-camera-installation-dha-karachi','/cctv-camera-installation-dha-karachi'),
                 ('/cctv-camera-installation-dha-karachi.php','/cctv-camera-installation-dha-karachi'),
-                ('/packages/','/calculator.php'),('/packages','/calculator.php'),
+                ('/packages/','/packages/'),('/packages','/packages'),
             ]:
                 request=urllib.request.Request('https://ultranetsecurity.com'+path, headers={'User-Agent':'UltraNet-Owner-SEO-Audit/1.0'})
                 for attempt in range(3):
@@ -149,7 +157,7 @@ with ftplib.FTP(timeout=30) as ftp:
                     print('Public route check:',path,response.status,response.geturl())
                     if response.status!=200 or response.geturl()!='https://ultranetsecurity.com'+final:
                         raise RuntimeError('Public route verification failed')
-            print('Video intercom, access control, IP camera, maintenance, shop, office, home and DHA landing pages and legacy redirect live; hosting rules preserved.')
+            print('Packages and service landing pages live; hosting rules preserved.')
         except Exception as exc:
             print('Public route check failed:',type(exc).__name__,str(exc))
             ftp.storbinary('STOR .htaccess',io.BytesIO(original))

@@ -26,6 +26,57 @@ function formatPrice(float $amount): string
     return 'PKR ' . number_format($amount, 0);
 }
 
+/* ── CCTV PACKAGES ── */
+
+function ensurePackageSchema(): bool
+{
+    static $ready = null;
+    if ($ready !== null) return $ready;
+    try {
+        getDB()->exec("CREATE TABLE IF NOT EXISTS packages (
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(180) NOT NULL,
+          slug VARCHAR(200) NOT NULL UNIQUE,
+          badge VARCHAR(60) DEFAULT NULL,
+          short_description VARCHAR(350) DEFAULT NULL,
+          system_type ENUM('analog','ip','wireless','custom') NOT NULL DEFAULT 'analog',
+          camera_count SMALLINT UNSIGNED DEFAULT NULL,
+          resolution VARCHAR(80) DEFAULT NULL,
+          recorder VARCHAR(140) DEFAULT NULL,
+          storage VARCHAR(100) DEFAULT NULL,
+          features TEXT DEFAULT NULL,
+          price DECIMAL(12,2) DEFAULT NULL,
+          old_price DECIMAL(12,2) DEFAULT NULL,
+          price_note VARCHAR(120) DEFAULT 'Starting from',
+          warranty VARCHAR(160) DEFAULT NULL,
+          featured TINYINT(1) NOT NULL DEFAULT 0,
+          sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+          status ENUM('active','inactive') NOT NULL DEFAULT 'inactive',
+          meta_title VARCHAR(180) DEFAULT NULL,
+          meta_description VARCHAR(300) DEFAULT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_package_public (status,featured,sort_order)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $ready = true;
+    } catch (PDOException $e) {
+        error_log('Package schema unavailable: ' . $e->getMessage());
+        $ready = false;
+    }
+    return $ready;
+}
+
+function getPublicPackages(): array
+{
+    if (!ensurePackageSchema()) return [];
+    return getDB()->query("SELECT * FROM packages WHERE status='active' ORDER BY featured DESC, sort_order ASC, id DESC")->fetchAll();
+}
+
+function packageFeatureLines(?string $features): array
+{
+    return array_values(array_filter(array_map('trim', preg_split('/\R/', (string)$features) ?: [])));
+}
+
 /* ── CATEGORIES ── */
 
 function getAllCategories(): array
