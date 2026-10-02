@@ -2,7 +2,7 @@
 require_once dirname(__DIR__) . '/config/config.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
 requireAdminLogin();
-if (!ensurePackageSchema()) { setFlash('error','Package table create nahi ho saki. Migration SQL import karein.'); header('Location: '.ADMIN_URL.'/packages.php'); exit; }
+if (!ensurePackageSchema()) { setFlash('error','The package database table could not be created. Import the migration SQL file.'); header('Location: '.ADMIN_URL.'/packages.php'); exit; }
 $errors=[]; $input=['system_type'=>'analog','price_note'=>'Starting from','sort_order'=>0,'status'=>'inactive','featured'=>0];
 if ($_SERVER['REQUEST_METHOD']==='POST') {
   verifyCsrf();
