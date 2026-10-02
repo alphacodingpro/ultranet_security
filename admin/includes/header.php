@@ -83,6 +83,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <i class="fa-solid fa-circle-plus"></i> Add Category
       </a>
     </li>
+    <li class="sidebar-section">PACKAGES</li>
+    <li>
+      <a href="<?= ADMIN_URL ?>/packages.php" class="<?= in_array($currentPage,['packages.php','package-add.php','package-edit.php']) ? 'active' : '' ?>">
+        <i class="fa-solid fa-box-open"></i> CCTV Packages
+      </a>
+    </li>
+    <li>
+      <a href="<?= ADMIN_URL ?>/package-add.php" class="<?= $currentPage === 'package-add.php' ? 'active' : '' ?>">
+        <i class="fa-solid fa-circle-plus"></i> Add Package
+      </a>
+    </li>
     <li class="sidebar-section">CALCULATOR</li>
     <li>
       <a href="<?= ADMIN_URL ?>/calculator-requests.php" class="<?= in_array($currentPage,['calculator-requests.php','calculator-request-view.php']) ? 'active' : '' ?>">
