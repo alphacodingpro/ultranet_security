@@ -29,7 +29,7 @@ include __DIR__ . '/includes/header.php';
 
 <!-- HERO -->
 <section id="home" class="hero" aria-label="Hero section">
-  <img class="hero-bg-img" src="<?= ASSETS_URL ?>/img/hero-bg.jpg" alt="CCTV security camera installation background Karachi" width="1600" height="900" loading="eager" fetchpriority="high">
+  <img class="hero-bg-img" src="<?= h(siteImageUrl('hero-bg.jpg')) ?>" alt="CCTV security camera installation background Karachi" width="1600" height="900" loading="eager" fetchpriority="high">
   <div class="hero-overlay"></div>
   <div class="container">
     <div class="row align-items-center g-4">
@@ -51,7 +51,7 @@ include __DIR__ . '/includes/header.php';
       </div>
       <div class="col-lg-5 hero-img-panel">
         <div class="hero-img-wrap">
-          <img src="<?= ASSETS_URL ?>/img/hero-camera.jpg" alt="Professional CCTV camera Karachi" width="800" height="600" loading="eager">
+          <img src="<?= h(siteImageUrl('hero-camera.jpg')) ?>" alt="Professional CCTV camera Karachi" width="800" height="600" loading="eager" fetchpriority="high">
           <div class="live-overlay"><span class="live-dot"></span><span>LIVE MONITORING</span></div>
           <div class="hero-cam-badge"><span class="big">2500+</span><span class="sm">CAMERAS INSTALLED</span></div>
         </div>
@@ -202,7 +202,7 @@ include __DIR__ . '/includes/header.php';
           ];
           foreach ($whys as [$ico, $title, $desc]): ?>
           <div class="why-card reveal">
-            <h4><i class="fa-solid <?= $ico ?>"></i> <?= $title ?></h4>
+            <h3><i class="fa-solid <?= $ico ?>"></i> <?= $title ?></h3>
             <p><?= $desc ?></p>
           </div>
           <?php endforeach; ?>
@@ -220,9 +220,9 @@ include __DIR__ . '/includes/header.php';
       <h2 class="section-title" style="font-size:36px">AUTHORIZED PARTNERS</h2>
     </div>
     <div class="row g-3 justify-content-center reveal">
-      <?php foreach (['HIKVISION','DAHUA','CP PLUS','UNIVIEW','AXIS','HANWHA'] as $b): ?>
+      <?php foreach (['Hikvision','Dahua','CP Plus','Uniview','Axis','Hanwha'] as $b): ?>
       <div class="col-6 col-md-2">
-        <a href="<?= SITE_URL ?>/search.php?q=<?= urlencode($b) ?>" class="brand-box text-decoration-none"><?= $b ?></a>
+        <a href="<?= SITE_URL ?>/search.php?q=<?= urlencode($b) ?>" class="brand-box text-decoration-none"><?= h(strtoupper($b)) ?></a>
       </div>
       <?php endforeach; ?>
     </div>
@@ -316,7 +316,7 @@ include __DIR__ . '/includes/header.php';
           foreach ($contactItems as [$ico,$title,$val]): ?>
           <div class="c-item">
             <div class="c-icon"><i class="<?= strpos($ico,'fa-brands')===false?'fa-solid ':'' ?><?= $ico ?>"></i></div>
-            <div><h5><?= $title ?></h5><p><?= $val ?></p></div>
+            <div><h3><?= $title ?></h3><p><?= $val ?></p></div>
           </div>
           <?php endforeach; ?>
           <div class="map-wrap">
@@ -332,14 +332,14 @@ include __DIR__ . '/includes/header.php';
       </div>
       <div class="col-lg-7 reveal">
         <div class="contact-card">
-          <h4 class="mb-4" style="font-size:21px"><i class="fa-solid fa-paper-plane me-2" style="color:var(--accent)"></i>Get Free Quote</h4>
+          <h3 class="mb-4" style="font-size:21px"><i class="fa-solid fa-paper-plane me-2" style="color:var(--accent)"></i>Get Free Quote</h3>
           <form id="contactForm" data-action="<?= SITE_URL ?>/contact-submit.php" novalidate>
             <div class="row g-3">
               <div class="col-md-6"><input type="text" name="name" class="form-control" placeholder="Your Full Name *" required></div>
               <div class="col-md-6"><input type="tel" name="phone" class="form-control" placeholder="Phone / WhatsApp *" required></div>
               <div class="col-md-6"><input type="email" name="email" class="form-control" placeholder="Email Address (optional)"></div>
               <div class="col-md-6">
-                <select name="service" class="form-select">
+                <select name="service" class="form-select" aria-label="Service required">
                   <option value="">Service Required</option>
                   <?php foreach (['Home CCTV Installation','Office / Commercial CCTV','Shop Security System','IP Camera System','CCTV Maintenance / AMC','Access Control','Other'] as $s): ?>
                   <option><?= h($s) ?></option>
@@ -347,7 +347,7 @@ include __DIR__ . '/includes/header.php';
                 </select>
               </div>
               <div class="col-md-6">
-                <select name="area" class="form-select">
+                <select name="area" class="form-select" aria-label="Karachi service area">
                   <option value="">Select Your Area</option>
                   <?php foreach (['DHA Karachi','Clifton','Gulshan-e-Iqbal','PECHS','North Nazimabad','Manzoor Colony / Hill Town','Other Karachi Area'] as $a): ?>
                   <option><?= h($a) ?></option>
@@ -355,7 +355,7 @@ include __DIR__ . '/includes/header.php';
                 </select>
               </div>
               <div class="col-md-6">
-                <select name="cameras" class="form-select">
+                <select name="cameras" class="form-select" aria-label="Number of cameras">
                   <option value="">No. of Cameras</option>
                   <?php foreach (['2–4 Cameras','4–8 Cameras','8–16 Cameras','16+ Cameras','Not Sure'] as $c): ?>
                   <option><?= h($c) ?></option>

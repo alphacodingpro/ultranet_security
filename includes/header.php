@@ -54,7 +54,7 @@ $searchQuery = h(queryText('q'));
   <link rel="icon"             type="image/png" sizes="16x16" href="<?= ASSETS_URL ?>/img/favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180"                href="<?= ASSETS_URL ?>/img/favicon-180.png">
   <link rel="manifest"         href="<?= SITE_URL ?>/site.webmanifest">
-  <meta name="theme-color"    content="#e63946">
+  <meta name="theme-color"    content="#cf2535">
 
   <script>
     (function () {
@@ -66,14 +66,14 @@ $searchQuery = h(queryText('q'));
   </script>
 
   <!-- Preconnect -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 
   <!-- Bootstrap + FA + Fonts -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= ASSETS_URL ?>/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="<?= ASSETS_URL ?>/vendor/fontawesome.min.css">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap"></noscript>
 
   <!-- Main CSS -->
   <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/style.css?v=<?= filemtime(__DIR__.'/../assets/css/style.css') ?>">

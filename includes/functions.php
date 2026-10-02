@@ -58,6 +58,21 @@ function ensurePackageSchema(): bool
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           INDEX idx_package_public (status,featured,sort_order)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $seedCheck = getDB()->prepare("SELECT setting_value FROM settings WHERE setting_key='packages_initial_seed'");
+        $seedCheck->execute();
+        if ($seedCheck->fetchColumn() === false) {
+            $packageCount = (int)getDB()->query('SELECT COUNT(*) FROM packages')->fetchColumn();
+            if ($packageCount === 0) {
+                $seed = getDB()->prepare('INSERT INTO packages (name,slug,badge,short_description,system_type,camera_count,resolution,recorder,storage,features,price_note,warranty,featured,sort_order,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+                $defaults = [
+                    ['4 Camera Home CCTV Package','4-camera-home-cctv-package','Home Starter','For entrances, lounge and outdoor coverage in a Karachi home.','analog',4,'2MP Full HD','4-channel DVR','1TB Surveillance HDD',"4 × 2MP cameras\n4-channel DVR\n1TB surveillance hard drive\nPower supply and connectors\nMobile viewing setup",'Request current price','Equipment warranty and installation support',0,10,'active'],
+                    ['8 Camera Shop & Office Package','8-camera-shop-office-package','Popular Choice','Balanced coverage for shops, offices, clinics and small warehouses.','analog',8,'2MP Full HD','8-channel DVR','2TB Surveillance HDD',"8 × 2MP cameras\n8-channel DVR\n2TB surveillance hard drive\nPower supply and connectors\nMobile viewing setup",'Request current price','Equipment warranty and installation support',1,20,'active'],
+                    ['4 Camera IP PoE Package','4-camera-ip-poe-package','IP System','A clean network-camera setup with one-cable power and data.','ip',4,'4MP','4-channel PoE NVR','1TB Surveillance HDD',"4 × 4MP IP cameras\n4-channel PoE NVR\n1TB surveillance hard drive\nCAT6 connectivity\nMobile viewing setup",'Request current price','Equipment warranty and installation support',0,30,'active'],
+                ];
+                foreach ($defaults as $package) $seed->execute($package);
+            }
+            getDB()->prepare("INSERT INTO settings (setting_key,setting_value) VALUES ('packages_initial_seed','1') ON DUPLICATE KEY UPDATE setting_value='1'")->execute();
+        }
         $ready = true;
     } catch (PDOException $e) {
         error_log('Package schema unavailable: ' . $e->getMessage());
@@ -289,7 +304,7 @@ function productImageUrl(?string $img): string
     if ($img && file_exists(dirname(__DIR__) . '/assets/img/' . $img)) {
         return ASSETS_URL . '/img/' . $img;
     }
-    return ASSETS_URL . '/img/no-image.jpg';
+    return siteImageUrl('no-image.jpg');
 }
 
 function uploadProductImage(array $file): string

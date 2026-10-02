@@ -21,7 +21,7 @@ jobs:
     - name: PHP syntax gate
       run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
 
-    - name: Build smaller copies of live homepage photos
+    - name: Build optimized images and local CSS dependencies
       env:
         FTP_SERVER: ${{ secrets.FTP_SERVER }}
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -29,6 +29,19 @@ jobs:
       run: |
         python3 -m pip install 'Pillow==11.3.0'
         python3 tools/build-web-images.py --live
+        mkdir -p assets/vendor/webfonts
+        curl --fail --silent --show-error --location --retry 3 \
+          https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css \
+          --output assets/vendor/bootstrap.min.css
+        curl --fail --silent --show-error --location --retry 3 \
+          https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css \
+          --output assets/vendor/fontawesome.min.css
+        sed -i 's/font-display:block/font-display:swap/g' assets/vendor/fontawesome.min.css
+        for font in fa-solid-900.woff2 fa-regular-400.woff2 fa-brands-400.woff2; do
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/$font" \
+            --output "assets/vendor/webfonts/$font"
+        done
 
     - name: Verify this is the current main commit
       run: |
