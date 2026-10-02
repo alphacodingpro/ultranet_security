@@ -1,0 +1,125 @@
+<?php
+require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/includes/functions.php';
+
+$packages = getPublicPackages();
+$pageTitle = 'CCTV Camera Packages in Karachi | UltraNet Security';
+$metaDesc = 'Compare CCTV camera packages for homes, shops and offices in Karachi. See cameras, recorder, storage and installation details, then request a WhatsApp quote.';
+$metaKeywords = 'CCTV camera packages Karachi, CCTV package price Karachi, camera installation package, Hikvision package Karachi, Dahua package Karachi';
+$canonicalSlug = '/packages/';
+$bodyClass = 'packages-page';
+$listItems = [];
+foreach ($packages as $index => $package) {
+    $item = [
+        '@type' => 'Service',
+        'name' => $package['name'],
+        'description' => $package['short_description'] ?: ('CCTV installation package for Karachi with ' . ((int)$package['camera_count'] ?: 'custom') . ' cameras.'),
+        'areaServed' => ['@type' => 'City', 'name' => 'Karachi'],
+        'provider' => ['@id' => SITE_URL . '/#business'],
+    ];
+    if ($package['price'] !== null) {
+        $item['offers'] = ['@type' => 'Offer', 'priceCurrency' => 'PKR', 'price' => (float)$package['price'], 'availability' => 'https://schema.org/InStock'];
+    }
+    $listItems[] = ['@type' => 'ListItem', 'position' => $index + 1, 'item' => $item];
+}
+$extraSchema = [[
+    '@context' => 'https://schema.org',
+    '@type' => 'ItemList',
+    'name' => 'CCTV Camera Packages in Karachi',
+    'itemListElement' => $listItems,
+]];
+include __DIR__ . '/includes/header.php';
+?>
+
+<section class="package-hero">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <span class="package-eyebrow"><i class="fa-solid fa-location-dot"></i> Karachi installation packages</span>
+        <h1>CCTV Camera Packages<br><span>For Every Property</span></h1>
+        <p>Home, shop ya office ke liye cameras, recorder, storage aur installation ko ek clear package mein compare karein.</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Assalam-o-Alaikum, mujhe Karachi mein CCTV package ka quote chahiye.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Quote</a>
+          <a class="btn-package-outline" href="tel:+923091243189"><i class="fa-solid fa-phone"></i> 0309-1243189</a>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="package-trust-card">
+          <strong>What you get</strong>
+          <span><i class="fa-solid fa-circle-check"></i> Karachi site guidance</span>
+          <span><i class="fa-solid fa-circle-check"></i> Installation options</span>
+          <span><i class="fa-solid fa-circle-check"></i> Mobile viewing setup</span>
+          <span><i class="fa-solid fa-circle-check"></i> After-sales support</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="package-list-section">
+  <div class="container">
+    <div class="section-title text-center package-section-title">
+      <span>Choose your setup</span>
+      <h2>Available CCTV Packages</h2>
+      <p>Final price cable length, camera model, storage aur site conditions ke mutabiq confirm hoti hai.</p>
+    </div>
+
+    <?php if ($packages): ?>
+    <div class="row g-4 justify-content-center">
+      <?php foreach ($packages as $package):
+        $message = 'Assalam-o-Alaikum, mujhe "' . $package['name'] . '" package ka quote chahiye. Location: Karachi.';
+      ?>
+      <div class="col-md-6 col-xl-4">
+        <article class="package-card <?= !empty($package['featured']) ? 'featured' : '' ?>">
+          <?php if (!empty($package['badge'])): ?><div class="package-badge"><?= h($package['badge']) ?></div><?php endif; ?>
+          <div class="package-card-head">
+            <span class="package-type"><?= h(strtoupper($package['system_type'])) ?> CCTV</span>
+            <h2><?= h($package['name']) ?></h2>
+            <?php if ($package['short_description']): ?><p><?= h($package['short_description']) ?></p><?php endif; ?>
+          </div>
+          <div class="package-specs">
+            <?php if ($package['camera_count']): ?><div><i class="fa-solid fa-video"></i><span><small>Cameras</small><strong><?= (int)$package['camera_count'] ?> Cameras</strong></span></div><?php endif; ?>
+            <?php if ($package['resolution']): ?><div><i class="fa-solid fa-expand"></i><span><small>Resolution</small><strong><?= h($package['resolution']) ?></strong></span></div><?php endif; ?>
+            <?php if ($package['recorder']): ?><div><i class="fa-solid fa-hard-drive"></i><span><small>Recorder</small><strong><?= h($package['recorder']) ?></strong></span></div><?php endif; ?>
+            <?php if ($package['storage']): ?><div><i class="fa-solid fa-database"></i><span><small>Storage</small><strong><?= h($package['storage']) ?></strong></span></div><?php endif; ?>
+          </div>
+          <?php $features = packageFeatureLines($package['features']); if ($features): ?>
+          <ul class="package-features">
+            <?php foreach ($features as $feature): ?><li><i class="fa-solid fa-check"></i><?= h($feature) ?></li><?php endforeach; ?>
+          </ul>
+          <?php endif; ?>
+          <?php if ($package['warranty']): ?><div class="package-warranty"><i class="fa-solid fa-shield-halved"></i><?= h($package['warranty']) ?></div><?php endif; ?>
+          <div class="package-price">
+            <?php if ($package['price'] !== null): ?>
+              <small><?= h($package['price_note'] ?: 'Starting from') ?></small>
+              <div><?php if ($package['old_price'] !== null): ?><del><?= formatPrice((float)$package['old_price']) ?></del><?php endif; ?><strong><?= formatPrice((float)$package['price']) ?></strong></div>
+            <?php else: ?>
+              <small>Price</small><strong>Request latest quote</strong>
+            <?php endif; ?>
+          </div>
+          <a class="package-quote-btn" href="https://wa.me/923091243189?text=<?= rawurlencode($message) ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Get This Package</a>
+        </article>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    <?php else: ?>
+    <div class="package-empty">
+      <i class="fa-solid fa-sliders"></i>
+      <h2>Custom package banwayein</h2>
+      <p>Camera quantity, recording days aur property size batayein—hum Karachi ke liye suitable package aur current price bhej denge.</p>
+      <a class="btn-package-primary" href="https://wa.me/923091243189?text=<?= rawurlencode('Assalam-o-Alaikum, mujhe custom CCTV package ka quote chahiye.') ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp</a>
+    </div>
+    <?php endif; ?>
+  </div>
+</section>
+
+<section class="package-notes">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-7"><h2>Package price mein kya change ho sakta hai?</h2><p>Cable route, camera model, night-vision range, hard-drive capacity, height aur civil work final quotation ko affect karte hain. Site details share karne ke baad exact written quote confirm kiya jata hai.</p></div>
+      <div class="col-lg-5"><div class="package-note-box"><i class="fa-solid fa-calculator"></i><div><strong>Need a custom calculation?</strong><p>Apni camera count aur recording requirement select karein.</p><a href="<?= SITE_URL ?>/calculator.php">Open CCTV Calculator <i class="fa-solid fa-arrow-right"></i></a></div></div></div>
+    </div>
+  </div>
+</section>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
