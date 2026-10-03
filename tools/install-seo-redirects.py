@@ -111,6 +111,13 @@ Header set Cache-Control "public, max-age=31536000, immutable"
 </IfModule>
 # END UltraNet static asset caching
 '''
+MOBILE_VIEWING_BLOCK=b'''# BEGIN UltraNet CCTV mobile viewing guide
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^cctv-mobile-viewing-setup-karachi/?$ cctv-mobile-viewing-setup-karachi.php [END]
+</IfModule>
+# END UltraNet CCTV mobile viewing guide
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -120,6 +127,7 @@ with ftplib.FTP(timeout=30) as ftp:
     original=old.getvalue()
     working=original.replace(OLD_BLOCK, b'')
     additions=b''
+    if MOBILE_VIEWING_BLOCK not in original: additions+=MOBILE_VIEWING_BLOCK+b'\n'
     if CACHE_BLOCK not in working: additions+=CACHE_BLOCK+b'\n'
     if POWER_BACKUP_BLOCK not in original: additions+=POWER_BACKUP_BLOCK+b'\n'
     if STORAGE_BLOCK not in original: additions+=STORAGE_BLOCK+b'\n'
@@ -139,6 +147,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+working))
         try:
             for path,final in [
+                ('/cctv-mobile-viewing-setup-karachi','/cctv-mobile-viewing-setup-karachi'),
+                ('/cctv-mobile-viewing-setup-karachi.php','/cctv-mobile-viewing-setup-karachi'),
                 ('/cctv-power-backup-ups-karachi','/cctv-power-backup-ups-karachi'),
                 ('/cctv-power-backup-ups-karachi.php','/cctv-power-backup-ups-karachi'),
                 ('/cctv-storage-upgrade-karachi','/cctv-storage-upgrade-karachi'),
