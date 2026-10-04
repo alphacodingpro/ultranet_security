@@ -36,6 +36,7 @@
           <li><a href="<?= SITE_URL ?>/office-cctv-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Office CCTV</a></li>
           <li><a href="<?= SITE_URL ?>/shop-cctv-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Shop CCTV</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-mobile-viewing-setup-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Mobile Viewing</a></li>
+          <li><a href="<?= SITE_URL ?>/cctv-cabling-installation-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Cabling &amp; Rewiring</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-power-backup-ups-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Power Backup</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-storage-upgrade-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Storage Upgrade</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-maintenance-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV Maintenance</a></li>
