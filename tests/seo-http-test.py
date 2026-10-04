@@ -162,7 +162,7 @@ cabling='/cctv-cabling-installation-karachi'
 s,u,h,t,p=get(cabling)
 check(s==200 and p.canonical==BASE+cabling and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Cabling canonical and crawlable layout')
 check(all('id="'+x+'"' in t for x in ['cable-assessment','cable-design','cable-installation','cable-testing','cable-questions']),'Cabling planning sections')
-check('PoE standard and total power budget' in t and 'avoid unapproved joins' in t and 'camera-to-port schedule' in t,'Cable, power and documentation guidance')
+check('PoE standard and total power budget' in t and 'Avoid unapproved joins' in t and 'camera-to-port schedule' in t,'Cable, power and documentation guidance')
 check(t.count('class="accordion-item"')==10 and 'qualified electrician' not in t and 'one price for every building' in t,'Useful cabling questions without unsupported claims')
 check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Cabling Service schema')
 check(get(cabling+'.php')[1]==BASE+cabling and get(cabling+'/')[1]==BASE+cabling,'Cabling aliases redirect')
