@@ -14,6 +14,7 @@ if(in_array($path,['/imou-wireless-cameras-karachi','/imou-wireless-cameras-kara
 if(in_array($path,['/cctv-storage-upgrade-karachi','/cctv-storage-upgrade-karachi/'],true)){require dirname(__DIR__).'/cctv-storage-upgrade-karachi.php';return true;}
 if(in_array($path,['/cctv-power-backup-ups-karachi','/cctv-power-backup-ups-karachi/'],true)){require dirname(__DIR__).'/cctv-power-backup-ups-karachi.php';return true;}
 if(in_array($path,['/cctv-mobile-viewing-setup-karachi','/cctv-mobile-viewing-setup-karachi/'],true)){require dirname(__DIR__).'/cctv-mobile-viewing-setup-karachi.php';return true;}
+if(in_array($path,['/cctv-cabling-installation-karachi','/cctv-cabling-installation-karachi/'],true)){require dirname(__DIR__).'/cctv-cabling-installation-karachi.php';return true;}
 if(in_array($path,['/packages','/packages/'],true)){require dirname(__DIR__).'/packages.php';return true;}
 if($path==='/sitemap.xml'){require dirname(__DIR__).'/sitemap.php';return true;}
 if($path==='/robots.txt'){require dirname(__DIR__).'/robots.php';return true;}
