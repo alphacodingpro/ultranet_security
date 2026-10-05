@@ -167,6 +167,15 @@ check(t.count('class="accordion-item"')==10 and 'qualified electrician' not in t
 check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Cabling Service schema')
 check(get(cabling+'.php')[1]==BASE+cabling and get(cabling+'/')[1]==BASE+cabling,'Cabling aliases redirect')
 check('href="'+BASE+cabling+'"' in get(maintenance)[3],'Cabling guide has contextual inbound link')
+audio='/cctv-camera-audio-installation-karachi'
+s,u,h,t,p=get(audio)
+check(s==200 and p.canonical==BASE+audio and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Audio guide canonical and crawlable layout')
+check(all('id="'+x+'"' in t for x in ['audio-requirement','audio-compatibility','audio-design','audio-handover','audio-questions']),'Audio planning sections')
+check('Recorded sound and' in t and 'two-way talk' in t and 'controlled recording' in t and 'separate device' in t,'Audio requirement and handover guidance')
+check(t.count('class="accordion-item"')==10 and 'technical feature as automatic permission' in t and 'studio-quality audio' in t,'Useful audio questions and limits')
+check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Audio guide Service schema')
+check(get(audio+'.php')[1]==BASE+audio and get(audio+'/')[1]==BASE+audio,'Audio guide aliases redirect')
+check('href="'+BASE+audio+'"' in get(home)[3],'Audio guide has contextual inbound link')
 dha='/cctv-camera-installation-dha-karachi'
 s,u,h,t,p=get(dha);check(s==200 and p.canonical==BASE+dha and p.robots=='index, follow' and p.h1==1,'DHA canonical, indexability and H1')
 check('Phases 1–8' in t and all(('Phase '+str(i)) in t for i in range(1,9)),'DHA phases 1–8')
@@ -175,7 +184,7 @@ check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, P
 check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
 check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+storage in urls and BASE+power in urls and BASE+mobile in urls and BASE+cabling in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+storage in urls and BASE+power in urls and BASE+mobile in urls and BASE+cabling in urls and BASE+audio in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
