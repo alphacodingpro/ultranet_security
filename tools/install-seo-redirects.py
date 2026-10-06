@@ -132,6 +132,13 @@ RewriteRule ^cctv-camera-audio-installation-karachi/?$ cctv-camera-audio-install
 </IfModule>
 # END UltraNet CCTV audio guide
 '''
+NIGHT_VISION_BLOCK=b'''# BEGIN UltraNet CCTV night vision guide
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^cctv-night-vision-camera-installation-karachi/?$ cctv-night-vision-camera-installation-karachi.php [END]
+</IfModule>
+# END UltraNet CCTV night vision guide
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -141,6 +148,7 @@ with ftplib.FTP(timeout=30) as ftp:
     original=old.getvalue()
     working=original.replace(OLD_BLOCK, b'')
     additions=b''
+    if NIGHT_VISION_BLOCK not in original: additions+=NIGHT_VISION_BLOCK+b'\n'
     if CCTV_AUDIO_BLOCK not in original: additions+=CCTV_AUDIO_BLOCK+b'\n'
     if CCTV_CABLING_BLOCK not in original: additions+=CCTV_CABLING_BLOCK+b'\n'
     if MOBILE_VIEWING_BLOCK not in original: additions+=MOBILE_VIEWING_BLOCK+b'\n'
@@ -163,6 +171,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+working))
         try:
             for path,final in [
+                ('/cctv-night-vision-camera-installation-karachi','/cctv-night-vision-camera-installation-karachi'),
+                ('/cctv-night-vision-camera-installation-karachi.php','/cctv-night-vision-camera-installation-karachi'),
                 ('/cctv-camera-audio-installation-karachi','/cctv-camera-audio-installation-karachi'),
                 ('/cctv-camera-audio-installation-karachi.php','/cctv-camera-audio-installation-karachi'),
                 ('/cctv-cabling-installation-karachi','/cctv-cabling-installation-karachi'),
