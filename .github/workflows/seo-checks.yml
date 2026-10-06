@@ -1,7 +1,7 @@
 name: SEO checks
 on:
   push:
-    branches: [main, codex/seo-audit, codex/dha-karachi, codex/sitewide-contact-popup, codex/home-cctv-guide, codex/bulk-product-delete, codex/office-cctv-guide, codex/shop-cctv-guide, codex/cctv-maintenance-guide, codex/ip-wireless-camera-guide, codex/access-control-guide, codex/video-door-intercom-guide, codex/imou-wireless-guide, codex/mobile-header, codex/storage-upgrade-guide, codex/cctv-power-backup-guide, codex/cctv-mobile-viewing-guide, codex/cctv-cabling-guide, codex/cctv-audio-guide]
+    branches: [main, codex/seo-audit, codex/dha-karachi, codex/sitewide-contact-popup, codex/home-cctv-guide, codex/bulk-product-delete, codex/office-cctv-guide, codex/shop-cctv-guide, codex/cctv-maintenance-guide, codex/ip-wireless-camera-guide, codex/access-control-guide, codex/video-door-intercom-guide, codex/imou-wireless-guide, codex/mobile-header, codex/storage-upgrade-guide, codex/cctv-power-backup-guide, codex/cctv-mobile-viewing-guide, codex/cctv-cabling-guide, codex/cctv-audio-guide, codex/cctv-night-vision-guide]
 permissions:
   contents: read
 jobs:
