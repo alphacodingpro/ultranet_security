@@ -185,6 +185,17 @@ check(t.count('class="accordion-item"')==10 and 'advertised illumination distanc
 check(any(x.get('@type')=='Service' and x['areaServed']['name']=='Karachi' for x in p.schemas),'Night vision Service schema')
 check(get(night+'.php')[1]==BASE+night and get(night+'/')[1]==BASE+night,'Night vision aliases redirect')
 check('href="'+BASE+night+'"' in get(home)[3],'Night vision guide has contextual inbound link')
+bahria='/cctv-camera-installation-bahria-town-karachi'
+s,u,h,t,p=get(bahria)
+check(s==200 and p.canonical==BASE+bahria and p.robots=='index, follow' and p.h1==1 and p.mains==1,'Bahria canonical, indexability and semantic layout')
+check(t.count('<details class="dha-faq">')==10,'Bahria ten server-rendered answers')
+check(all('id="'+x+'"' in t for x in ['bahria-coverage','bahria-design','bahria-process','bahria-faq']),'Bahria navigation targets exist')
+check('precinct' in t and 'management permission' in t and 'Do not send passwords' in t and 'does not represent a Bahria Town branch office' in t,'Bahria practical access and honest local identity')
+service=next(x for x in p.schemas if x.get('@type')=='Service')
+check(service['areaServed']['name']=='Bahria Town Karachi' and service['url']==BASE+bahria,'Bahria Service schema matches page')
+check('dha.css' in t and 'assets/optimized/service-home.webp' in t and '2026-10-09' in t,'Bahria styles, image and update date')
+check(get(bahria+'.php')[1]==BASE+bahria and get(bahria+'/')[1]==BASE+bahria,'Bahria aliases redirect')
+check(bahria in get('/')[3],'Homepage has crawlable Bahria link')
 dha='/cctv-camera-installation-dha-karachi'
 s,u,h,t,p=get(dha);check(s==200 and p.canonical==BASE+dha and p.robots=='index, follow' and p.h1==1,'DHA canonical, indexability and H1')
 check('Phases 1–8' in t and all(('Phase '+str(i)) in t for i in range(1,9)),'DHA phases 1–8')
@@ -193,7 +204,8 @@ check(any(x.get('@type')=='Service' and x['areaServed']['name']=='DHA Karachi, P
 check(any(x.get('@type')=='FAQPage' for x in p.schemas) and 'wa.me/923091243189' in t and 'tel:+923091243189' in t,'DHA FAQs and direct CTAs')
 check(get(dha+'.php')[1]==BASE+dha and get(dha+'/')[1]==BASE+dha,'DHA aliases redirect')
 s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'};urls=[n.text for n in root.findall('s:url/s:loc',ns)]
-check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+storage in urls and BASE+power in urls and BASE+mobile in urls and BASE+cabling in urls and BASE+audio in urls and BASE+night in urls and BASE+dha in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
+check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+storage in urls and BASE+power in urls and BASE+mobile in urls and BASE+cabling in urls and BASE+audio in urls and BASE+night in urls and BASE+dha in urls and BASE+bahria in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
+

@@ -139,6 +139,13 @@ RewriteRule ^cctv-night-vision-camera-installation-karachi/?$ cctv-night-vision-
 </IfModule>
 # END UltraNet CCTV night vision guide
 '''
+BAHRIA_BLOCK=b'''# BEGIN UltraNet Bahria Town landing page
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^cctv-camera-installation-bahria-town-karachi/?$ cctv-camera-installation-bahria-town-karachi.php [END]
+</IfModule>
+# END UltraNet Bahria Town landing page
+'''
 with ftplib.FTP(timeout=30) as ftp:
     ftp.connect(os.environ['FTP_SERVER'])
     ftp.login(os.environ['FTP_USERNAME'],os.environ['FTP_PASSWORD'])
@@ -148,6 +155,7 @@ with ftplib.FTP(timeout=30) as ftp:
     original=old.getvalue()
     working=original.replace(OLD_BLOCK, b'')
     additions=b''
+    if BAHRIA_BLOCK not in original: additions+=BAHRIA_BLOCK+b'\n'
     if NIGHT_VISION_BLOCK not in original: additions+=NIGHT_VISION_BLOCK+b'\n'
     if CCTV_AUDIO_BLOCK not in original: additions+=CCTV_AUDIO_BLOCK+b'\n'
     if CCTV_CABLING_BLOCK not in original: additions+=CCTV_CABLING_BLOCK+b'\n'
@@ -171,6 +179,8 @@ with ftplib.FTP(timeout=30) as ftp:
         ftp.storbinary('STOR .htaccess',io.BytesIO(additions+working))
         try:
             for path,final in [
+                ('/cctv-camera-installation-bahria-town-karachi','/cctv-camera-installation-bahria-town-karachi'),
+                ('/cctv-camera-installation-bahria-town-karachi.php','/cctv-camera-installation-bahria-town-karachi'),
                 ('/cctv-night-vision-camera-installation-karachi','/cctv-night-vision-camera-installation-karachi'),
                 ('/cctv-night-vision-camera-installation-karachi.php','/cctv-night-vision-camera-installation-karachi'),
                 ('/cctv-camera-audio-installation-karachi','/cctv-camera-audio-installation-karachi'),
@@ -220,3 +230,4 @@ with ftplib.FTP(timeout=30) as ftp:
             print('Public route check failed:',type(exc).__name__,str(exc))
             ftp.storbinary('STOR .htaccess',io.BytesIO(original))
             raise RuntimeError('Route validation failed; original hosting rules restored.') from None
+

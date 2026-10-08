@@ -46,6 +46,7 @@
           <li><a href="<?= SITE_URL ?>/access-control-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Access Control</a></li>
           <li><a href="<?= SITE_URL ?>/video-door-intercom-installation-karachi"><i class="fa-solid fa-chevron-right"></i> Video Door Intercom</a></li>
           <li><a href="<?= SITE_URL ?>/cctv-camera-installation-dha-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV in DHA Karachi</a></li>
+          <li><a href="<?= SITE_URL ?>/cctv-camera-installation-bahria-town-karachi"><i class="fa-solid fa-chevron-right"></i> CCTV in Bahria Town Karachi</a></li>
         </ul>
       </div>
       <div class="col-sm-6 col-lg-2">
@@ -125,3 +126,4 @@
 <script src="<?= ASSETS_URL ?>/js/main.js?v=<?= filemtime(__DIR__.'/../assets/js/main.js') ?>"></script>
 </body>
 </html>
+

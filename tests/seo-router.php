@@ -18,7 +18,9 @@ if(in_array($path,['/cctv-cabling-installation-karachi','/cctv-cabling-installat
 if(in_array($path,['/cctv-camera-audio-installation-karachi','/cctv-camera-audio-installation-karachi/'],true)){require dirname(__DIR__).'/cctv-camera-audio-installation-karachi.php';return true;}
 if(in_array($path,['/cctv-night-vision-camera-installation-karachi','/cctv-night-vision-camera-installation-karachi/'],true)){require dirname(__DIR__).'/cctv-night-vision-camera-installation-karachi.php';return true;}
 if(in_array($path,['/packages','/packages/'],true)){require dirname(__DIR__).'/packages.php';return true;}
+if(in_array($path,['/cctv-camera-installation-bahria-town-karachi','/cctv-camera-installation-bahria-town-karachi/'],true)){require dirname(__DIR__).'/cctv-camera-installation-bahria-town-karachi.php';return true;}
 if($path==='/sitemap.xml'){require dirname(__DIR__).'/sitemap.php';return true;}
 if($path==='/robots.txt'){require dirname(__DIR__).'/robots.php';return true;}
 if($path==='/'||is_file(dirname(__DIR__).$path)) return false;
 require dirname(__DIR__).'/includes/404.php';
+
