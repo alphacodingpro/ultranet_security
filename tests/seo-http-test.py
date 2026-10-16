@@ -210,15 +210,15 @@ for url in urls:
 
 # Ownership must be visible and agree with the sitewide entity relationship.
 s,u,h,t,p=get('/')
-check('id="owner"' in t and 'Muhammad Ubaid is the owner of UltraNet Security' in t,'Homepage names the business owner in server-rendered content')
-check('Who owns UltraNet Security?' in t,'Ownership answer visible on homepage')
+check('owner-heading' not in t and 'Muhammad Ubaid is the owner of UltraNet Security' not in t,'Homepage has no owner profile section')
+check('Who owns UltraNet Security?' not in t and 'Business Owner' not in t,'Homepage FAQ and contact focus on services')
 for path in ['/', '/products.php', '/cctv-camera-installation-bahria-town-karachi']:
     s,u,h,t,p=get(path)
     person=next(x for x in p.schemas if x.get('@type')=='Person' and x.get('@id')==BASE+'/#muhammad-ubaid')
     business=next(x for x in p.schemas if x.get('@type')=='LocalBusiness')
     check(person['name']=='Muhammad Ubaid' and person['jobTitle']=='Owner' and person['worksFor']['@id']==business['@id'],'Owner identity and business relationship: '+path)
     check(business['employee']['@id']==person['@id'] and person['url']==BASE+'/#owner','Business links to the same owner identity: '+path)
-    check('Muhammad Ubaid — Owner, UltraNet Security' in t and BASE+'/#owner' in t,'Sitewide visible owner link: '+path)
+    check('id="owner"' in t and 'Muhammad Ubaid — Owner, UltraNet Security' in t,'Sitewide visible owner link: '+path)
 
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
 

@@ -41,7 +41,8 @@ for path in ('/', '/products.php'):
     with urllib.request.urlopen(request, timeout=30) as response:
         if response.status != 200:
             raise RuntimeError('Owner verification HTTP failure: ' + path)
-        page = IdentityPage(response.read().decode('utf-8'))
+        response_body = response.read().decode('utf-8')
+        page = IdentityPage(response_body)
     text = ' '.join(page.visible)
     person = next(x for x in page.schemas if x.get('@type') == 'Person' and x.get('@id') == BASE + '/#muhammad-ubaid')
     business = next(x for x in page.schemas if x.get('@type') == 'LocalBusiness')
@@ -55,6 +56,8 @@ for path in ('/', '/products.php'):
         and business['employee']['@id'] == person['@id']
     ):
         raise RuntimeError('Public owner identity mismatch: ' + path)
-    if path == '/' and 'Muhammad Ubaid is the owner of UltraNet Security' not in text:
-        raise RuntimeError('Public homepage owner introduction missing')
+    if path == '/' and ('owner-heading' in response_body or 'Who owns UltraNet Security?' in text):
+        raise RuntimeError('Homepage owner profile was not removed')
+    if 'id="owner"' not in response_body:
+        raise RuntimeError('Public footer owner anchor missing')
     print('Verified public owner identity:', BASE + path, 'Muhammad Ubaid — Owner, UltraNet Security')
