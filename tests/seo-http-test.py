@@ -207,5 +207,18 @@ s,u,h,t,p=get('/sitemap.xml');root=ET.fromstring(t);ns={'s':'http://www.sitemaps
 check(BASE+home in urls and BASE+office in urls and BASE+shop in urls and BASE+maintenance in urls and BASE+ip in urls and BASE+access in urls and BASE+intercom in urls and BASE+imou in urls and BASE+storage in urls and BASE+power in urls and BASE+mobile in urls and BASE+cabling in urls and BASE+audio in urls and BASE+night in urls and BASE+dha in urls and BASE+bahria in urls and BASE+series in urls and not any('empty-category' in x or 'inactive-camera' in x for x in urls),'Sitemap canonical and active content only')
 for url in urls:
     s,u,h,t,p=get(url[len(BASE):]);check(s==200 and p.canonical==url and 'noindex' not in p.robots,'Sitemap target valid: '+url)
+
+# Ownership must be visible and agree with the sitewide entity relationship.
+s,u,h,t,p=get('/')
+check('id="owner"' in t and 'Muhammad Ubaid is the owner of UltraNet Security' in t,'Homepage names the business owner in server-rendered content')
+check('Who owns UltraNet Security?' in t,'Ownership answer visible on homepage')
+for path in ['/', '/products.php', '/cctv-camera-installation-bahria-town-karachi']:
+    s,u,h,t,p=get(path)
+    person=next(x for x in p.schemas if x.get('@type')=='Person' and x.get('@id')==BASE+'/#muhammad-ubaid')
+    business=next(x for x in p.schemas if x.get('@type')=='LocalBusiness')
+    check(person['name']=='Muhammad Ubaid' and person['jobTitle']=='Owner' and person['worksFor']['@id']==business['@id'],'Owner identity and business relationship: '+path)
+    check(business['employee']['@id']==person['@id'] and person['url']==BASE+'/#owner','Business links to the same owner identity: '+path)
+    check('Muhammad Ubaid — Owner, UltraNet Security' in t and BASE+'/#owner' in t,'Sitewide visible owner link: '+path)
+
 print('SEO HTTP regressions passed, including all '+str(len(urls))+' fixture sitemap targets.')
 

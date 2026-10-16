@@ -24,6 +24,7 @@
           UltraNet <span>Security</span>
         </div>
         <p>CCTV system planning, installation and maintenance information for homes, offices and businesses in Karachi.</p>
+        <p><a href="<?= SITE_URL ?>/#owner">Muhammad Ubaid — Owner, UltraNet Security</a></p>
         <p class="mt-2"><i class="fa-solid fa-location-dot me-2" style="color:var(--accent)"></i>House 239, Manzoor Colony, Hill Town, Karachi 75460</p>
         <div class="social-icons">
           <a href="https://wa.me/923091243189" class="social-icon" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>

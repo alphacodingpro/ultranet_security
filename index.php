@@ -13,6 +13,7 @@ $metaKeywords = 'CCTV installation Karachi, security camera Karachi, Hikvision K
 $canonicalSlug = '/';
 
 $homeFaqs = [
+    ['Who owns UltraNet Security?','Muhammad Ubaid is the owner of UltraNet Security, a CCTV and security systems business serving Karachi. Contact UltraNet Security to discuss camera installation, upgrades and maintenance.'],
     ['How much does CCTV installation cost in Karachi?','CCTV installation starts from PKR 15,000 for a 4-camera home package. Contact us at 0309-1243189 for a free site survey and exact quote.'],
     ['Which CCTV brand is best for home in Karachi?','Hikvision and Dahua are the top two brands we recommend. Both offer excellent image quality and local after-sales support.'],
     ['Can I view CCTV cameras on my mobile phone?','Yes! All our systems come with free mobile app setup — Hik-Connect, DMSS or iVMS-4500 on Android and iOS.'],
@@ -176,6 +177,28 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
+<!-- BUSINESS OWNER -->
+<section id="owner" class="py-5" aria-labelledby="owner-heading">
+  <div class="container">
+    <div class="row align-items-start g-4">
+      <div class="col-lg-4">
+        <p class="section-tag">About UltraNet Security</p>
+        <h2 id="owner-heading" class="section-title">MEET THE <span style="color:var(--accent)">OWNER</span></h2>
+      </div>
+      <div class="col-lg-8">
+        <h3>Muhammad Ubaid</h3>
+        <p><strong>Owner, UltraNet Security · Karachi, Pakistan</strong></p>
+        <p>Muhammad Ubaid is the owner of UltraNet Security, a CCTV and security systems business serving homes, shops, offices and other properties across Karachi.</p>
+        <p>Discuss your property layout, the areas you need to monitor, recording requirements and existing equipment with UltraNet Security. Our service guides explain camera planning, installation, upgrades and maintenance so you can make an informed decision.</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a class="btn-red" href="https://wa.me/923091243189"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Contact UltraNet Security</a>
+          <a class="btn-ghost" href="<?= SITE_URL ?>/#contact">View Contact Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- WHY US -->
 <section class="why-us">
   <div class="container">
@@ -308,6 +331,7 @@ include __DIR__ . '/includes/header.php';
         <div class="contact-card">
           <?php
           $contactItems = [
+            ['fa-user','Business Owner','Muhammad Ubaid — Owner, UltraNet Security'],
             ['fa-phone','Phone / WhatsApp','<a href="tel:+923091243189" style="color:var(--primary);font-weight:600;text-decoration:none">0309-1243189</a>'],
             ['fa-location-dot','Our Office','House No 239, Manzoor Colony<br>Hill Town St 10, Karachi – 75460'],
             ['fa-clock','Working Hours','Monday – Sunday: 8:00 AM – 10:00 PM'],

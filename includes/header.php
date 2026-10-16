@@ -88,6 +88,7 @@ $searchQuery = h(queryText('q'));
     "@type" => "LocalBusiness",
     "@id" => SITE_URL . "/#business",
     "name" => "UltraNet Security",
+    "employee" => ["@id" => SITE_URL . "/#muhammad-ubaid"],
     "image" => ASSETS_URL . "/img/og-image.jpg",
     "url" => SITE_URL . "/",
     "telephone" => "+92-309-1243189",
@@ -106,6 +107,19 @@ $searchQuery = h(queryText('q'));
     ],
     "areaServed" => ["Karachi","DHA Karachi","Clifton","Gulshan-e-Iqbal","PECHS","North Nazimabad","Manzoor Colony"],
     "sameAs" => ["https://wa.me/923091243189"]
+  ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
+  </script>
+
+  <!-- Business owner identity matches the visible homepage and footer. -->
+  <script type="application/ld+json">
+  <?= json_encode([
+    "@context" => "https://schema.org",
+    "@type" => "Person",
+    "@id" => SITE_URL . "/#muhammad-ubaid",
+    "name" => "Muhammad Ubaid",
+    "jobTitle" => "Owner",
+    "url" => SITE_URL . "/#owner",
+    "worksFor" => ["@id" => SITE_URL . "/#business"]
   ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
   </script>
 
